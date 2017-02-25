@@ -3,11 +3,16 @@ package ss
 import (
 	"encoding/base64"
 	"math/rand"
+	"time"
 )
 
 const PASSWORD_LENGTH = 256
 
 type Password [PASSWORD_LENGTH]byte
+
+func init() {
+	rand.Seed(time.Now().Unix())
+}
 
 type Cipher struct {
 	encodePassword *Password

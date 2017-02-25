@@ -32,12 +32,12 @@ func (conn *SecureConn) Close() error {
 }
 
 func Dial(remoteAddr string, cipher *Cipher) (*SecureConn, error) {
-	server, err := net.Dial("tcp", remoteAddr)
+	remoteConn, err := net.Dial("tcp", remoteAddr)
 	if err != nil {
 		return nil, err
 	}
 	return &SecureConn{
-		Conn:   server,
+		Conn:   remoteConn,
 		cipher: cipher,
 	}, nil
 }
@@ -50,9 +50,9 @@ func Listen(laddr string, cipher *Cipher) (chan *SecureConn) {
 	}
 	go func() {
 		for {
-			client, _ := l.Accept()
+			localConn, _ := l.Accept()
 			ch <- &SecureConn{
-				Conn:   client,
+				Conn:   localConn,
 				cipher: cipher,
 			}
 		}
