@@ -7,17 +7,9 @@ import (
 	"encoding/binary"
 	"bufio"
 	"os"
-	"encoding/json"
-	"log"
 )
 
-type ServerConfig struct {
-	cipher   *ss.Cipher `json:"-"`
-	Local    string `json:"local"`
-	Password string `json:"password"`
-}
-
-var Config *ServerConfig
+var Config *ss.Config
 
 // https://www.ietf.org/rfc/rfc1928.txt
 func handleConn(localConn *ss.SecureConn) {
@@ -164,30 +156,17 @@ func handleConn(localConn *ss.SecureConn) {
 }
 
 func Run() {
-	for localConn := range ss.Listen(Config.Local, Config.cipher) {
+	for localConn := range ss.Listen(Config.Local, Config.Cipher) {
 		go handleConn(localConn)
 	}
 }
 
 func main() {
 	filePath := os.Args[1]
-	file, err := os.Open(filePath)
+	var err error
+	Config, err = ss.ParseConfig(filePath)
 	if err != nil {
 		panic(err)
 	}
-	Config = &ServerConfig{}
-	err = json.NewDecoder(file).Decode(Config)
-	if err != nil {
-		panic(err)
-	}
-	if len(Config.Password) == 0 {
-		Config.Password = ss.RandPassword()
-		log.Println("Use password:", Config.Password)
-	}
-	cipher, err := ss.NewCipher(Config.Password)
-	if err != nil {
-		panic(err)
-	}
-	Config.cipher = cipher
 	Run()
 }

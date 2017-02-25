@@ -6,21 +6,13 @@ import (
 	"io"
 	"log"
 	"os"
-	"encoding/json"
 )
 
-type LocalConfig struct {
-	cipher   *ss.Cipher `json:"-"`
-	Local    string `json:"local"`
-	Server   string `json:"server"`
-	Password string `json:"password"`
-}
-
-var Config *LocalConfig
+var Config *ss.Config
 
 func handleConn(userConn net.Conn) {
 	defer userConn.Close()
-	server, err := ss.Dial(Config.Server, Config.cipher)
+	server, err := ss.Dial(Config.Server, Config.Cipher)
 	if err != nil {
 		log.Println(err)
 		return
@@ -44,24 +36,10 @@ func Run() {
 
 func main() {
 	filePath := os.Args[1]
-	file, err := os.Open(filePath)
+	var err error
+	Config, err = ss.ParseConfig(filePath)
 	if err != nil {
 		panic(err)
 	}
-	defer file.Close()
-	Config = &LocalConfig{}
-	err = json.NewDecoder(file).Decode(Config)
-	if err != nil {
-		panic(err)
-	}
-	if len(Config.Password) == 0 {
-		Config.Password = ss.RandPassword()
-		log.Println("Use password:", Config.Password)
-	}
-	cipher, err := ss.NewCipher(Config.Password)
-	if err != nil {
-		panic(err)
-	}
-	Config.cipher = cipher
 	Run()
 }
