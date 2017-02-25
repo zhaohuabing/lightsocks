@@ -3,14 +3,31 @@ package ss
 import (
 	"os"
 	"encoding/json"
-	"log"
+	"time"
+	"fmt"
+	"strings"
 )
 
 type Config struct {
 	Cipher   *Cipher `json:"-"`
 	Local    string `json:"local"`
-	Server   string `json:"server"`
+	Remote   string `json:"remote"`
 	Password string `json:"password"`
+	Timeout  time.Duration `json:"timeout"`
+}
+
+func (config *Config) String() string {
+	return fmt.Sprintf(`
+=== Use Config ===
+Local
+	%s
+Remote
+	%s
+Password
+	%s
+Timeout
+	%s
+	`, config.Local, config.Remote, config.Password, config.Timeout)
 }
 
 func ParseConfig(filePath string) (config *Config, err error) {
@@ -19,16 +36,18 @@ func ParseConfig(filePath string) (config *Config, err error) {
 		return
 	}
 	defer file.Close()
-	config = &Config{}
+	config = &Config{
+		Local:    ":8010",
+		Remote:   ":8010",
+		Password: RandPassword(),
+		Timeout:  10 * time.Second,
+	}
 	err = json.NewDecoder(file).Decode(config)
 	if err != nil {
 		return
 	}
-	if len(config.Password) == 0 {
-		config.Password = RandPassword()
-		log.Println("Use password:", config.Password)
-	}
-	cipher, err := NewCipher(config.Password)
+	fmt.Println(config)
+	cipher, err := NewCipher(strings.TrimSpace(config.Password))
 	if err != nil {
 		return
 	}

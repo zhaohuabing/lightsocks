@@ -12,7 +12,7 @@ var Config *ss.Config
 
 func handleConn(userConn net.Conn) {
 	defer userConn.Close()
-	server, err := ss.Dial(Config.Server, Config.Cipher)
+	server, err := ss.Dial(Config)
 	if err != nil {
 		log.Println(err)
 		return
@@ -28,6 +28,9 @@ func Run() {
 		panic(err)
 	}
 	defer listener.Close()
+	defer func() {
+		log.Println(recover())
+	}()
 	for {
 		userConn, _ := listener.Accept()
 		go handleConn(userConn)

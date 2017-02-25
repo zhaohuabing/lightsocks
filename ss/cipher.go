@@ -19,12 +19,16 @@ type Cipher struct {
 	decodePassword *Password
 }
 
-func (cipher *Cipher) encode(byte byte) byte {
-	return cipher.encodePassword[byte]
+func (cipher *Cipher) encode(bs []byte) {
+	for i, v := range bs {
+		bs[i] = cipher.encodePassword[v]
+	}
 }
 
-func (cipher *Cipher) decode(byte byte) byte {
-	return cipher.decodePassword[byte]
+func (cipher *Cipher) decode(bs []byte) {
+	for i, v := range bs {
+		bs[i] = cipher.decodePassword[v]
+	}
 }
 
 func NewCipher(passwordStr string) (*Cipher, error) {

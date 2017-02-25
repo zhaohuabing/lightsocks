@@ -7,6 +7,7 @@ import (
 	"encoding/binary"
 	"bufio"
 	"os"
+	"log"
 )
 
 var Config *ss.Config
@@ -156,7 +157,10 @@ func handleConn(localConn *ss.SecureConn) {
 }
 
 func Run() {
-	for localConn := range ss.Listen(Config.Local, Config.Cipher) {
+	defer func() {
+		log.Println(recover())
+	}()
+	for localConn := range ss.Listen(Config) {
 		go handleConn(localConn)
 	}
 }
