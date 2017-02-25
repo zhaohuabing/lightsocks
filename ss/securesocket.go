@@ -15,14 +15,14 @@ func (conn *SecureConn) Read(b []byte) (n int, err error) {
 		return
 	}
 	for i := 0; i < n; i++ {
-		b[i] = conn.cipher.Decode(b[i])
+		b[i] = conn.cipher.decode(b[i])
 	}
 	return
 }
 
 func (conn *SecureConn) Write(b []byte) (int, error) {
 	for i, v := range b {
-		b[i] = conn.cipher.Encode(v)
+		b[i] = conn.cipher.encode(v)
 	}
 	return conn.Conn.Write(b)
 }
@@ -31,25 +31,23 @@ func (conn *SecureConn) Close() error {
 	return conn.Conn.Close()
 }
 
-func Dial(serverAddr string, password string) (*SecureConn, error) {
-	server, err := net.Dial("tcp", serverAddr)
+func Dial(remoteAddr string, cipher *Cipher) (*SecureConn, error) {
+	server, err := net.Dial("tcp", remoteAddr)
 	if err != nil {
 		return nil, err
 	}
-	cipher, err := NewCipher(password)
 	return &SecureConn{
 		Conn:   server,
 		cipher: cipher,
 	}, nil
 }
 
-func Listen(laddr string, password string) (chan *SecureConn) {
-	ch := make(chan *SecureConn, 10)
+func Listen(laddr string, cipher *Cipher) (chan *SecureConn) {
+	ch := make(chan *SecureConn)
 	l, err := net.Listen("tcp", laddr)
 	if err != nil {
 		panic(err)
 	}
-	cipher, err := NewCipher(password)
 	go func() {
 		for {
 			client, _ := l.Accept()

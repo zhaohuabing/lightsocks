@@ -12,11 +12,12 @@ import (
 )
 
 type ServerConfig struct {
+	cipher   *ss.Cipher `json:"-"`
 	Local    string `json:"local"`
 	Password string `json:"password"`
 }
 
-var config *ServerConfig
+var Config *ServerConfig
 
 // https://www.ietf.org/rfc/rfc1928.txt
 func handleConn(localConn *ss.SecureConn) {
@@ -163,7 +164,7 @@ func handleConn(localConn *ss.SecureConn) {
 }
 
 func Run() {
-	for localConn := range ss.Listen(config.Local, config.Password) {
+	for localConn := range ss.Listen(Config.Local, Config.cipher) {
 		go handleConn(localConn)
 	}
 }
@@ -174,14 +175,19 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	config = &ServerConfig{}
-	err = json.NewDecoder(file).Decode(config)
+	Config = &ServerConfig{}
+	err = json.NewDecoder(file).Decode(Config)
 	if err != nil {
 		panic(err)
 	}
-	if len(config.Password) == 0 {
-		config.Password = ss.RandPassword()
-		log.Println("Use password:", config.Password)
+	if len(Config.Password) == 0 {
+		Config.Password = ss.RandPassword()
+		log.Println("Use password:", Config.Password)
 	}
+	cipher, err := ss.NewCipher(Config.Password)
+	if err != nil {
+		panic(err)
+	}
+	Config.cipher = cipher
 	Run()
 }

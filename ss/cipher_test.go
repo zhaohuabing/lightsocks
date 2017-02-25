@@ -14,8 +14,8 @@ func TestNewCipher(t *testing.T) {
 	}
 	for i := 0; i < PASSWORD_LENGTH; i++ {
 		org := byte(i)
-		e := cipher.Encode(org)
-		d := cipher.Decode(e)
+		e := cipher.encode(org)
+		d := cipher.decode(e)
 		if d != org {
 			t.Error("Decode Encode error:", org, e, d)
 		}

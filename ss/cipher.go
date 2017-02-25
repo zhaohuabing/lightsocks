@@ -14,15 +14,11 @@ type Cipher struct {
 	decodePassword *Password
 }
 
-func (cipher *Cipher) toString() string {
-	return base64.StdEncoding.EncodeToString(cipher.encodePassword[:])
-}
-
-func (cipher *Cipher) Encode(byte byte) byte {
+func (cipher *Cipher) encode(byte byte) byte {
 	return cipher.encodePassword[byte]
 }
 
-func (cipher *Cipher) Decode(byte byte) byte {
+func (cipher *Cipher) decode(byte byte) byte {
 	return cipher.decodePassword[byte]
 }
 

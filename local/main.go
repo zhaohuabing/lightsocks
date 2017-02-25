@@ -10,16 +10,17 @@ import (
 )
 
 type LocalConfig struct {
+	cipher   *ss.Cipher `json:"-"`
 	Local    string `json:"local"`
 	Server   string `json:"server"`
 	Password string `json:"password"`
 }
 
-var config *LocalConfig
+var Config *LocalConfig
 
 func handleConn(userConn net.Conn) {
 	defer userConn.Close()
-	server, err := ss.Dial(config.Server, config.Password)
+	server, err := ss.Dial(Config.Server, Config.cipher)
 	if err != nil {
 		log.Println(err)
 		return
@@ -30,12 +31,13 @@ func handleConn(userConn net.Conn) {
 }
 
 func Run() {
-	l, err := net.Listen("tcp", config.Local)
+	listener, err := net.Listen("tcp", Config.Local)
 	if err != nil {
 		panic(err)
 	}
+	defer listener.Close()
 	for {
-		userConn, _ := l.Accept()
+		userConn, _ := listener.Accept()
 		go handleConn(userConn)
 	}
 }
@@ -46,14 +48,20 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	config = &LocalConfig{}
-	err = json.NewDecoder(file).Decode(config)
+	defer file.Close()
+	Config = &LocalConfig{}
+	err = json.NewDecoder(file).Decode(Config)
 	if err != nil {
 		panic(err)
 	}
-	if len(config.Password) == 0 {
-		config.Password = ss.RandPassword()
-		log.Println("Use password:", config.Password)
+	if len(Config.Password) == 0 {
+		Config.Password = ss.RandPassword()
+		log.Println("Use password:", Config.Password)
 	}
+	cipher, err := ss.NewCipher(Config.Password)
+	if err != nil {
+		panic(err)
+	}
+	Config.cipher = cipher
 	Run()
 }
