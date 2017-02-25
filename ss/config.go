@@ -6,6 +6,7 @@ import (
 	"time"
 	"fmt"
 	"strings"
+	"errors"
 )
 
 type Config struct {
@@ -30,13 +31,13 @@ Timeout
 	`, config.Local, config.Remote, config.Password, config.Timeout)
 }
 
-func ParseConfig(filePath string) (config *Config, err error) {
+func ParseConfig(filePath string) (*Config, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return
+		return nil, errors.New(fmt.Sprintf("open file %s error:%s", filePath, err))
 	}
 	defer file.Close()
-	config = &Config{
+	config := &Config{
 		Local:    ":8010",
 		Remote:   ":8010",
 		Password: RandPassword(),
@@ -44,13 +45,13 @@ func ParseConfig(filePath string) (config *Config, err error) {
 	}
 	err = json.NewDecoder(file).Decode(config)
 	if err != nil {
-		return
+		return nil, errors.New(fmt.Sprintf("invalid json config file:\n%s", file))
 	}
 	fmt.Println(config)
 	cipher, err := NewCipher(strings.TrimSpace(config.Password))
 	if err != nil {
-		return
+		return nil, errors.New(fmt.Sprintf("invalid password:%s", config.Password))
 	}
 	config.Cipher = cipher
-	return
+	return config, nil
 }

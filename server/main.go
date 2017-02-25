@@ -157,10 +157,14 @@ func handleConn(localConn *ss.SecureConn) {
 }
 
 func Run() {
+	ch, err := ss.Listen(Config)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	defer func() {
 		log.Println(recover())
 	}()
-	for localConn := range ss.Listen(Config) {
+	for localConn := range ch {
 		go handleConn(localConn)
 	}
 }
@@ -170,7 +174,7 @@ func main() {
 	var err error
 	Config, err = ss.ParseConfig(filePath)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 	Run()
 }

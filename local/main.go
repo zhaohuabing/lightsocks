@@ -17,7 +17,7 @@ func handleConn(userConn net.Conn) {
 		log.Println(err)
 		return
 	}
-	defer server.Close()
+	defer server.Conn.Close()
 	go io.Copy(server, userConn)
 	io.Copy(userConn, server)
 }
@@ -25,7 +25,7 @@ func handleConn(userConn net.Conn) {
 func Run() {
 	listener, err := net.Listen("tcp", Config.Local)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 	defer listener.Close()
 	defer func() {
@@ -42,7 +42,7 @@ func main() {
 	var err error
 	Config, err = ss.ParseConfig(filePath)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 	Run()
 }

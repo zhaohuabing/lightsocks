@@ -2,6 +2,8 @@ package ss
 
 import (
 	"net"
+	"errors"
+	"fmt"
 )
 
 type SecureConn struct {
@@ -23,14 +25,10 @@ func (conn *SecureConn) Write(bs []byte) (int, error) {
 	return conn.Conn.Write(bs)
 }
 
-func (conn *SecureConn) Close() error {
-	return conn.Conn.Close()
-}
-
 func Dial(config *Config) (*SecureConn, error) {
 	remoteConn, err := net.DialTimeout("tcp", config.Remote, config.Timeout)
 	if err != nil {
-		return nil, err
+		return nil, errors.New(fmt.Sprintf("dail remote %s fail:%s", config.Remote, err))
 	}
 	return &SecureConn{
 		Conn:   remoteConn,
@@ -38,20 +36,21 @@ func Dial(config *Config) (*SecureConn, error) {
 	}, nil
 }
 
-func Listen(config *Config) (chan *SecureConn) {
+func Listen(config *Config) (chan *SecureConn, error) {
 	ch := make(chan *SecureConn)
-	l, err := net.Listen("tcp", config.Local)
+	listener, err := net.Listen("tcp", config.Local)
 	if err != nil {
-		panic(err)
+		return nil, errors.New(fmt.Sprintf("listen error:%s", err))
 	}
 	go func() {
+		defer listener.Close()
 		for {
-			localConn, _ := l.Accept()
+			localConn, _ := listener.Accept()
 			ch <- &SecureConn{
 				Conn:   localConn,
 				cipher: config.Cipher,
 			}
 		}
 	}()
-	return ch
+	return ch, nil
 }

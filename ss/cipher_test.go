@@ -1,6 +1,9 @@
 package ss
 
-import "testing"
+import (
+	"testing"
+	"reflect"
+)
 
 func TestRandPassword(t *testing.T) {
 	t.Log(RandPassword())
@@ -12,12 +15,18 @@ func TestNewCipher(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	org := make([]byte, PASSWORD_LENGTH)
 	for i := 0; i < PASSWORD_LENGTH; i++ {
-		org := byte(i)
-		e := cipher.encode(org)
-		d := cipher.decode(e)
-		if d != org {
-			t.Error("Decode Encode error:", org, e, d)
-		}
+		org[i] = byte(i)
+	}
+	tmp := make([]byte, PASSWORD_LENGTH)
+	copy(tmp, org)
+	t.Log(tmp)
+	cipher.encode(tmp)
+	t.Log(tmp)
+	cipher.decode(tmp)
+	t.Log(tmp)
+	if !reflect.DeepEqual(org, tmp) {
+		t.Error("encode decode error")
 	}
 }
