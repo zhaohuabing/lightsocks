@@ -11,6 +11,7 @@ func TestRandPassword(t *testing.T) {
 
 func TestNewCipher(t *testing.T) {
 	password := RandPassword()
+	t.Log(password)
 	cipher, err := NewCipher(password)
 	if err != nil {
 		t.Error(err)
