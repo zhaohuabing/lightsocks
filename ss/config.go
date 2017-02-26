@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 	"errors"
+	"log"
 )
 
 type Config struct {
@@ -31,7 +32,13 @@ Timeout
 	`, config.Local, config.Remote, config.Password, config.Timeout)
 }
 
-func ParseConfig(filePath string) (*Config, error) {
+func ParseConfig() (*Config, error) {
+	if len(os.Args) != 2 {
+		log.Fatalln(`require param json config file path, call like this:
+		ls-exec ./path/to/json/config/file/path
+		`)
+	}
+	filePath := os.Args[1]
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("open file %s error:%s", filePath, err))

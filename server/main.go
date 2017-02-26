@@ -6,7 +6,6 @@ import (
 	"io"
 	"encoding/binary"
 	"bufio"
-	"os"
 	"log"
 )
 
@@ -171,9 +170,8 @@ func Run() {
 }
 
 func main() {
-	filePath := os.Args[1]
 	var err error
-	Config, err = ss.ParseConfig(filePath)
+	Config, err = ss.ParseConfig()
 	if err != nil {
 		log.Fatalln(err)
 	}
