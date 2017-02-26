@@ -12,6 +12,7 @@ import (
 
 var Config *ss.Config
 
+// socks5实现
 // https://www.ietf.org/rfc/rfc1928.txt
 func handleConn(localConn *ss.SecureConn) {
 	defer localConn.Conn.Close()
@@ -95,33 +96,33 @@ func handleConn(localConn *ss.SecureConn) {
 	case 0x01:
 		//	IP V4 address: X'01'
 		ipv4 := make([]byte, net.IPv4len)
-		_, err = reader.Read(ipv4)
-		if err != nil {
+		n, err := reader.Read(ipv4)
+		if err != nil || n != net.IPv4len {
 			return
 		}
 		dIP = ipv4
 	case 0x03:
 		//	DOMAINNAME: X'03'
 		domainLen, err := reader.ReadByte()
+		domainLenInt := int(domainLen)
 		if err != nil {
 			return
 		}
-		domain := make([]byte, domainLen)
-		_, err = reader.Read(domain)
-		if err != nil {
+		domain := make([]byte, domainLenInt)
+		n, err := reader.Read(domain)
+		if err != nil || n != domainLenInt {
 			return
 		}
 		ipAddr, err := net.ResolveIPAddr("ip", string(domain))
 		if err != nil {
-			localConn.Write([]byte{0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) //响应客户端Host unreachable
 			return
 		}
 		dIP = ipAddr.IP
 	case 0x04:
 		//	IP V6 address: X'04'
 		ipv6 := make([]byte, net.IPv6len)
-		_, err = reader.Read(ipv6)
-		if err != nil {
+		n, err := reader.Read(ipv6)
+		if err != nil || n != net.IPv6len {
 			return
 		}
 		dIP = ipv6
@@ -129,14 +130,15 @@ func handleConn(localConn *ss.SecureConn) {
 		return
 	}
 	dPort := make([]byte, 2)
-	_, err = reader.Read(dPort)
-	if err != nil {
+	n, err := reader.Read(dPort)
+	if err != nil || n != 2 {
 		return
 	}
-	server, err := net.DialTCP("tcp", nil, &net.TCPAddr{
+	tcpAddr := &net.TCPAddr{
 		IP:   dIP,
 		Port: int(binary.BigEndian.Uint16(dPort)),
-	})
+	}
+	server, err := net.DialTimeout("tcp", tcpAddr.String(), Config.Timeout)
 	/**
 	 +----+-----+-------+------+----------+----------+
         |VER | REP |  RSV  | ATYP | BND.ADDR | BND.PORT |
@@ -145,7 +147,6 @@ func handleConn(localConn *ss.SecureConn) {
         +----+-----+-------+------+----------+----------+
 	 */
 	if err != nil {
-		localConn.Write([]byte{0x05, 0x03, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) //响应客户端Network unreachable
 		return
 	} else {
 		localConn.Write([]byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) //响应客户端连接成功
