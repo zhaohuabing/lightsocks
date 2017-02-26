@@ -1,10 +1,10 @@
-package main
+package local
 
 import (
 	"net"
-	"github.com/gwuhaolin/lightsocks/ss"
 	"io"
 	"log"
+	"github.com/gwuhaolin/lightsocks/ss"
 )
 
 var Config *ss.Config
@@ -34,13 +34,4 @@ func Run() {
 		userConn, _ := listener.Accept()
 		go handleConn(userConn)
 	}
-}
-
-func main() {
-	var err error
-	Config, err = ss.ParseConfig()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	Run()
 }

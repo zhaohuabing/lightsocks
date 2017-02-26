@@ -1,12 +1,12 @@
-package main
+package server
 
 import (
-	"github.com/gwuhaolin/lightsocks/ss"
 	"net"
 	"io"
 	"encoding/binary"
 	"bufio"
 	"log"
+	"github.com/gwuhaolin/lightsocks/ss"
 )
 
 var Config *ss.Config
@@ -167,13 +167,4 @@ func Run() {
 	for localConn := range ch {
 		go handleConn(localConn)
 	}
-}
-
-func main() {
-	var err error
-	Config, err = ss.ParseConfig()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	Run()
 }
