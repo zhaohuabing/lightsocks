@@ -2,7 +2,6 @@ package local
 
 import (
 	"net"
-	"io"
 	"log"
 	"github.com/gwuhaolin/lightsocks/ss"
 )
@@ -17,8 +16,9 @@ func handleConn(userConn net.Conn) {
 		return
 	}
 	defer server.Conn.Close()
-	go io.Copy(server, userConn)
-	io.Copy(userConn, server)
+	//进行转发
+	go ss.Copy(server, userConn)
+	ss.Copy(userConn, server)
 }
 
 func Run() {
