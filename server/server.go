@@ -7,14 +7,25 @@ import (
 	"github.com/gwuhaolin/lightsocks/ss"
 )
 
-var Config *ss.Config
+func Run() {
+	ch, err := ss.ServerListen()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer func() {
+		log.Println(recover())
+	}()
+	for localConn := range ch {
+		go handleConn(localConn)
+	}
+}
 
 // socks5实现
 // https://www.ietf.org/rfc/rfc1928.txt
 // http://www.jianshu.com/p/172810a70fad
 func handleConn(localConn *ss.SecureConn) {
 	defer localConn.Conn.Close()
-	buf := make([]byte, 1024)
+	buf := make([]byte, ss.BUF_SIZE)
 	/**
 	The localConn connects to the dstServer, and sends a ver
    	identifier/method selection message:
@@ -100,17 +111,4 @@ func handleConn(localConn *ss.SecureConn) {
 	//进行转发
 	go ss.CopyBuf(dstServer, localConn, buf)
 	ss.Copy(localConn, dstServer)
-}
-
-func Run() {
-	ch, err := ss.Listen(Config)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer func() {
-		log.Println(recover())
-	}()
-	for localConn := range ch {
-		go handleConn(localConn)
-	}
 }

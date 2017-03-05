@@ -6,23 +6,8 @@ import (
 	"github.com/gwuhaolin/lightsocks/ss"
 )
 
-var Config *ss.Config
-
-func handleConn(userConn net.Conn) {
-	defer userConn.Close()
-	server, err := ss.Dial(Config)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	defer server.Conn.Close()
-	//进行转发
-	go ss.Copy(server, userConn)
-	ss.Copy(userConn, server)
-}
-
 func Run() {
-	listener, err := net.Listen("tcp", Config.Local)
+	listener, err := net.ListenTCP("tcp", ss.GlobalConfig.LocalAddr)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -31,7 +16,20 @@ func Run() {
 		log.Println(recover())
 	}()
 	for {
-		userConn, _ := listener.Accept()
+		userConn, _ := listener.AcceptTCP()
 		go handleConn(userConn)
 	}
+}
+
+func handleConn(userConn *net.TCPConn) {
+	defer userConn.Close()
+	server, err := ss.DialServer()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer server.Conn.Close()
+	//进行转发
+	go ss.Copy(server, userConn)
+	ss.Copy(userConn, server)
 }

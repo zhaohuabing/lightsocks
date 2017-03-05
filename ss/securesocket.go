@@ -7,9 +7,10 @@ import (
 	"io"
 )
 
+const BUF_SIZE = 1024
+
 type SecureConn struct {
-	Conn   net.Conn
-	cipher *Cipher
+	Conn *net.TCPConn
 }
 
 func (conn *SecureConn) Read(bs []byte) (n int, err error) {
@@ -17,17 +18,17 @@ func (conn *SecureConn) Read(bs []byte) (n int, err error) {
 	if err != nil {
 		return
 	}
-	conn.cipher.decode(bs[:n])
+	GlobalConfig.Cipher.decode(bs[:n])
 	return
 }
 
 func (conn *SecureConn) Write(bs []byte) (int, error) {
-	conn.cipher.encode(bs)
+	GlobalConfig.Cipher.encode(bs)
 	return conn.Conn.Write(bs)
 }
 
 func Copy(dst io.Writer, src io.Reader) error {
-	buf := make([]byte, 1024)
+	buf := make([]byte, BUF_SIZE)
 	return CopyBuf(dst, src, buf)
 }
 
@@ -51,34 +52,29 @@ func CopyBuf(dst io.Writer, src io.Reader, buf []byte) error {
 			}
 		}
 	}
+	buf = nil
 	return nil
 }
 
-func Dial(config *Config) (*SecureConn, error) {
-	remoteConn, err := net.DialTimeout("tcp", config.Remote, config.Timeout)
+func DialServer() (*SecureConn, error) {
+	remoteConn, err := net.DialTCP("tcp", nil, GlobalConfig.ServerAddr)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("dail remote %s fail:%s", config.Remote, err))
+		return nil, errors.New(fmt.Sprintf("dail remote %s fail:%s", GlobalConfig.ServerAddr, err))
 	}
-	return &SecureConn{
-		Conn:   remoteConn,
-		cipher: config.Cipher,
-	}, nil
+	return &SecureConn{Conn: remoteConn }, nil
 }
 
-func Listen(config *Config) (chan *SecureConn, error) {
+func ServerListen() (chan *SecureConn, error) {
 	ch := make(chan *SecureConn)
-	listener, err := net.Listen("tcp", config.Local)
+	listener, err := net.ListenTCP("tcp", GlobalConfig.LocalAddr)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("listen error:%s", err))
 	}
 	go func() {
 		defer listener.Close()
 		for {
-			localConn, _ := listener.Accept()
-			ch <- &SecureConn{
-				Conn:   localConn,
-				cipher: config.Cipher,
-			}
+			localConn, _ := listener.AcceptTCP()
+			ch <- &SecureConn{Conn: localConn}
 		}
 	}()
 	return ch, nil

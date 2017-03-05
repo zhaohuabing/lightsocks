@@ -12,10 +12,7 @@ func TestRandPassword(t *testing.T) {
 func TestNewCipher(t *testing.T) {
 	password := RandPassword()
 	t.Log(password)
-	cipher, err := NewCipher(password)
-	if err != nil {
-		t.Error(err)
-	}
+	cipher := NewCipher(password)
 	org := make([]byte, PASSWORD_LENGTH)
 	for i := 0; i < PASSWORD_LENGTH; i++ {
 		org[i] = byte(i)
