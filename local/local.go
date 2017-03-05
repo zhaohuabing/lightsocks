@@ -28,8 +28,8 @@ func handleConn(userConn *net.TCPConn) {
 		log.Println(err)
 		return
 	}
-	defer server.Conn.Close()
+	defer server.Close()
 	//进行转发
-	go ss.Copy(server, userConn)
-	ss.Copy(userConn, server)
+	go ss.EncodeCopy(server, userConn)
+	ss.DecodeCopy(userConn, server)
 }

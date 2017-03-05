@@ -9,12 +9,8 @@ import (
 
 const BUF_SIZE = 1024
 
-type SecureConn struct {
-	Conn *net.TCPConn
-}
-
-func (conn *SecureConn) Read(bs []byte) (n int, err error) {
-	n, err = conn.Conn.Read(bs)
+func DecodeRead(conn *net.TCPConn, bs []byte) (n int, err error) {
+	n, err = conn.Read(bs)
 	if err != nil {
 		return
 	}
@@ -22,19 +18,48 @@ func (conn *SecureConn) Read(bs []byte) (n int, err error) {
 	return
 }
 
-func (conn *SecureConn) Write(bs []byte) (int, error) {
+func EncodeWrite(conn *net.TCPConn, bs []byte) (int, error) {
 	GlobalConfig.Cipher.encode(bs)
-	return conn.Conn.Write(bs)
+	return conn.Write(bs)
 }
 
-func Copy(dst io.Writer, src io.Reader) error {
+func EncodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
 	buf := make([]byte, BUF_SIZE)
-	return CopyBuf(dst, src, buf)
+	return EncodeCopyBuf(dst, src, buf)
 }
 
-func CopyBuf(dst io.Writer, src io.Reader, buf []byte) error {
+func DecodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
+	buf := make([]byte, BUF_SIZE)
+	return DecodeCopyBuf(dst, src, buf)
+}
+
+func EncodeCopyBuf(dst *net.TCPConn, src *net.TCPConn, buf []byte) error {
 	for {
 		nr, er := src.Read(buf)
+		if nr > 0 {
+			nw, ew := EncodeWrite(dst, buf[0:nr])
+			if ew != nil {
+				return ew
+			}
+			if nr != nw {
+				return io.ErrShortWrite
+			}
+		}
+		if er != nil {
+			if er != io.EOF {
+				return er
+			} else {
+				return nil
+			}
+		}
+	}
+	buf = nil
+	return nil
+}
+
+func DecodeCopyBuf(dst *net.TCPConn, src *net.TCPConn, buf []byte) error {
+	for {
+		nr, er := DecodeRead(src, buf)
 		if nr > 0 {
 			nw, ew := dst.Write(buf[0:nr])
 			if ew != nil {
@@ -56,26 +81,10 @@ func CopyBuf(dst io.Writer, src io.Reader, buf []byte) error {
 	return nil
 }
 
-func DialServer() (*SecureConn, error) {
+func DialServer() (*net.TCPConn, error) {
 	remoteConn, err := net.DialTCP("tcp", nil, GlobalConfig.ServerAddr)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("dail remote %s fail:%s", GlobalConfig.ServerAddr, err))
 	}
-	return &SecureConn{Conn: remoteConn }, nil
-}
-
-func ServerListen() (chan *SecureConn, error) {
-	ch := make(chan *SecureConn)
-	listener, err := net.ListenTCP("tcp", GlobalConfig.LocalAddr)
-	if err != nil {
-		return nil, errors.New(fmt.Sprintf("listen error:%s", err))
-	}
-	go func() {
-		defer listener.Close()
-		for {
-			localConn, _ := listener.AcceptTCP()
-			ch <- &SecureConn{Conn: localConn}
-		}
-	}()
-	return ch, nil
+	return remoteConn, nil
 }

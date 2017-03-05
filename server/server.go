@@ -8,14 +8,15 @@ import (
 )
 
 func Run() {
-	ch, err := ss.ServerListen()
+	listener, err := net.ListenTCP("tcp", ss.GlobalConfig.LocalAddr)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("listen error:%s", err)
 	}
 	defer func() {
 		log.Println(recover())
 	}()
-	for localConn := range ch {
+	for {
+		localConn, _ := listener.AcceptTCP()
 		go handleConn(localConn)
 	}
 }
@@ -23,8 +24,8 @@ func Run() {
 // socks5实现
 // https://www.ietf.org/rfc/rfc1928.txt
 // http://www.jianshu.com/p/172810a70fad
-func handleConn(localConn *ss.SecureConn) {
-	defer localConn.Conn.Close()
+func handleConn(localConn *net.TCPConn) {
+	defer localConn.Close()
 	buf := make([]byte, ss.BUF_SIZE)
 	/**
 	The localConn connects to the dstServer, and sends a ver
@@ -39,7 +40,7 @@ func handleConn(localConn *ss.SecureConn) {
    	appear in the METHODS field.
 	 */
 	// 第一个字段VER代表Socks的版本，Socks5默认为0x05，其固定长度为1个字节
-	_, err := localConn.Read(buf)
+	_, err := ss.DecodeRead(localConn, buf)
 	// 只支持版本5
 	if err != nil || buf[0] != 0x05 {
 		return
@@ -55,7 +56,7 @@ func handleConn(localConn *ss.SecureConn) {
                          +----+--------+
 	 */
 	// 不需要验证，直接验证通过
-	localConn.Write([]byte{0x05, 0x00})
+	ss.EncodeWrite(localConn, []byte{0x05, 0x00})
 	/**
 	+----+-----+-------+------+----------+----------+
         |VER | CMD |  RSV  | ATYP | DST.ADDR | DST.PORT |
@@ -64,7 +65,7 @@ func handleConn(localConn *ss.SecureConn) {
         +----+-----+-------+------+----------+----------+
 	 */
 	// VER代表Socks协议的版本，Socks5默认为0x05，其值长度为1个字节
-	n, err := localConn.Read(buf)
+	n, err := ss.DecodeRead(localConn, buf)
 	// 最短域名= 3 bytes
 	// 9 = 1+1+1+1+3+2
 	if err != nil || n < 9 {
@@ -105,10 +106,10 @@ func handleConn(localConn *ss.SecureConn) {
 	if err != nil {
 		return
 	} else {
-		localConn.Write([]byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) //响应客户端连接成功
+		ss.EncodeWrite(localConn, []byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) //响应客户端连接成功
 		defer dstServer.Close()
 	}
 	//进行转发
-	go ss.CopyBuf(dstServer, localConn, buf)
-	ss.Copy(localConn, dstServer)
+	go ss.DecodeCopyBuf(dstServer, localConn, buf)
+	ss.EncodeCopy(localConn, dstServer)
 }
