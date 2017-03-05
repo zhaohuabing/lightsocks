@@ -66,9 +66,8 @@ func handleConn(localConn *net.TCPConn) {
 	 */
 	// VER代表Socks协议的版本，Socks5默认为0x05，其值长度为1个字节
 	n, err := ss.DecodeRead(localConn, buf)
-	// 最短域名= 3 bytes
-	// 9 = 1+1+1+1+3+2
-	if err != nil || n < 9 {
+	// n 最短的长度为7 情况为 ATYP=3 DST.ADDR占用1字节 值为0x0
+	if err != nil || n < 7 {
 		return
 	}
 	var dIP []byte
