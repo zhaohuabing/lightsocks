@@ -98,8 +98,6 @@ func handleConn(localConn *net.TCPConn) {
 		Port: int(binary.BigEndian.Uint16(dPort)),
 	}
 	dstServer, err := net.DialTCP("tcp", nil, dstAddr)
-	dstServer.SetLinger(0)
-	dstServer.SetDeadline(time.Now().Add(ss.GlobalConfig.Timeout))
 	/**
 	 +----+-----+-------+------+----------+----------+
         |VER | REP |  RSV  | ATYP | BND.ADDR | BND.PORT |
@@ -111,6 +109,8 @@ func handleConn(localConn *net.TCPConn) {
 		return
 	} else {
 		ss.EncodeWrite(localConn, []byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) //响应客户端连接成功
+		dstServer.SetLinger(0)
+		dstServer.SetDeadline(time.Now().Add(ss.GlobalConfig.Timeout))
 		defer dstServer.Close()
 	}
 	//进行转发
