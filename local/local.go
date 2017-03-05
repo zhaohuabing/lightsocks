@@ -4,6 +4,7 @@ import (
 	"net"
 	"log"
 	"github.com/gwuhaolin/lightsocks/ss"
+	"time"
 )
 
 func Run() {
@@ -17,6 +18,7 @@ func Run() {
 	}()
 	for {
 		userConn, _ := listener.AcceptTCP()
+		userConn.SetLinger(0)
 		go handleConn(userConn)
 	}
 }
@@ -24,6 +26,8 @@ func Run() {
 func handleConn(userConn *net.TCPConn) {
 	defer userConn.Close()
 	server, err := ss.DialServer()
+	server.SetLinger(0)
+	server.SetDeadline(time.Now().Add(ss.GlobalConfig.Timeout))
 	if err != nil {
 		log.Println(err)
 		return

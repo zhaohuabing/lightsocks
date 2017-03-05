@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"log"
 	"github.com/gwuhaolin/lightsocks/ss"
+	"time"
 )
 
 func Run() {
@@ -17,6 +18,8 @@ func Run() {
 	}()
 	for {
 		localConn, _ := listener.AcceptTCP()
+		//localConn被关闭时直接清除所有数据 不管没有发送的数据
+		localConn.SetLinger(0)
 		go handleConn(localConn)
 	}
 }
@@ -95,6 +98,8 @@ func handleConn(localConn *net.TCPConn) {
 		Port: int(binary.BigEndian.Uint16(dPort)),
 	}
 	dstServer, err := net.DialTCP("tcp", nil, dstAddr)
+	dstServer.SetLinger(0)
+	dstServer.SetDeadline(time.Now().Add(ss.GlobalConfig.Timeout))
 	/**
 	 +----+-----+-------+------+----------+----------+
         |VER | REP |  RSV  | ATYP | BND.ADDR | BND.PORT |
