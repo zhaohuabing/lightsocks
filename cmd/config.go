@@ -50,7 +50,7 @@ func (config *Config) ToSsConfig() (*core.Config, error) {
 	return core.NewConfig(config.Timeout, password, localAddr, serverAddr), nil
 }
 
-func ReadConfig() *Config {
+func ReadConfig(defaultConfig *Config) {
 	if len(os.Args) != 2 {
 		log.Fatalln(`require param json config file path, call like this:
 		ls-exec ./path/to/json/config/file/path
@@ -63,17 +63,9 @@ func ReadConfig() *Config {
 	}
 	defer file.Close()
 
-	config := &Config{
-		Local:    ":8010",
-		Server:   ":8010",
-		Password: core.RandPassword().String(),
-		Timeout:  10 * time.Second,
-	}
-
 	//parse & set Cipher
-	err = json.NewDecoder(file).Decode(config)
+	err = json.NewDecoder(file).Decode(defaultConfig)
 	if err != nil {
 		log.Fatalln(fmt.Sprintf("invalid json config file:\n%s", file))
 	}
-	return config
 }

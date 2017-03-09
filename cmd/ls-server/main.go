@@ -5,6 +5,7 @@ import (
 	"github.com/gwuhaolin/lightsocks/server"
 	"github.com/gwuhaolin/lightsocks/cmd"
 	"github.com/gwuhaolin/lightsocks/core"
+	"time"
 	_ "net/http/pprof"
 	"net/http"
 )
@@ -15,12 +16,17 @@ func main() {
 	}()
 
 	var err error
-	config := cmd.ReadConfig()
-	ssConfig, err := config.ToSsConfig()
+	defaultConfig := &cmd.Config{
+		Local:    ":8011",
+		Password: core.RandPassword().String(),
+		Timeout:  10 * time.Second,
+	}
+	cmd.ReadConfig(defaultConfig)
+	ssConfig, err := defaultConfig.ToSsConfig()
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println(config)
+	log.Println(defaultConfig)
 	core.GlobalConfig = ssConfig
 	server.Run()
 }
