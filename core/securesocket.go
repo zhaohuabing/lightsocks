@@ -1,4 +1,4 @@
-package ss
+package core
 
 import (
 	"net"
@@ -25,15 +25,6 @@ func EncodeWrite(conn *net.TCPConn, bs []byte) (int, error) {
 
 func EncodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
 	buf := make([]byte, BUF_SIZE)
-	return EncodeCopyBuf(dst, src, buf)
-}
-
-func DecodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
-	buf := make([]byte, BUF_SIZE)
-	return DecodeCopyBuf(dst, src, buf)
-}
-
-func EncodeCopyBuf(dst *net.TCPConn, src *net.TCPConn, buf []byte) error {
 	for {
 		nr, er := src.Read(buf)
 		if nr > 0 {
@@ -53,11 +44,11 @@ func EncodeCopyBuf(dst *net.TCPConn, src *net.TCPConn, buf []byte) error {
 			}
 		}
 	}
-	buf = nil
 	return nil
 }
 
-func DecodeCopyBuf(dst *net.TCPConn, src *net.TCPConn, buf []byte) error {
+func DecodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
+	buf := make([]byte, BUF_SIZE)
 	for {
 		nr, er := DecodeRead(src, buf)
 		if nr > 0 {
@@ -77,7 +68,6 @@ func DecodeCopyBuf(dst *net.TCPConn, src *net.TCPConn, buf []byte) error {
 			}
 		}
 	}
-	buf = nil
 	return nil
 }
 

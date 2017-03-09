@@ -1,4 +1,4 @@
-package ss
+package core
 
 type Cipher struct {
 	encodePassword *Password

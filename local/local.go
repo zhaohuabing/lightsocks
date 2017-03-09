@@ -3,19 +3,16 @@ package local
 import (
 	"net"
 	"log"
-	"github.com/gwuhaolin/lightsocks/ss"
 	"time"
+	"github.com/gwuhaolin/lightsocks/core"
 )
 
 func Run() {
-	listener, err := net.ListenTCP("tcp", ss.GlobalConfig.LocalAddr)
+	listener, err := net.ListenTCP("tcp", core.GlobalConfig.LocalAddr)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer listener.Close()
-	defer func() {
-		log.Println(recover())
-	}()
 	for {
 		userConn, _ := listener.AcceptTCP()
 		userConn.SetLinger(0)
@@ -25,15 +22,15 @@ func Run() {
 
 func handleConn(userConn *net.TCPConn) {
 	defer userConn.Close()
-	server, err := ss.DialServer()
+	server, err := core.DialServer()
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	server.SetLinger(0)
-	server.SetDeadline(time.Now().Add(ss.GlobalConfig.Timeout))
+	server.SetDeadline(time.Now().Add(core.GlobalConfig.Timeout))
 	defer server.Close()
 	//进行转发
-	go ss.EncodeCopy(server, userConn)
-	ss.DecodeCopy(userConn, server)
+	go core.EncodeCopy(server, userConn)
+	core.DecodeCopy(userConn, server)
 }

@@ -3,11 +3,11 @@ package cmd
 import (
 	"time"
 	"fmt"
-	"github.com/gwuhaolin/lightsocks/ss"
 	"os"
 	"encoding/json"
 	"log"
 	"net"
+	"github.com/gwuhaolin/lightsocks/core"
 )
 
 type Config struct {
@@ -31,8 +31,8 @@ Timeout
 	`, config.Local, config.Server, config.Password, config.Timeout)
 }
 
-func (config *Config) ToSsConfig() (*ss.Config, error) {
-	password, err := ss.ParsePassword(config.Password)
+func (config *Config) ToSsConfig() (*core.Config, error) {
+	password, err := core.ParsePassword(config.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (config *Config) ToSsConfig() (*ss.Config, error) {
 		return nil, err
 	}
 
-	return ss.NewConfig(config.Timeout, password, localAddr, serverAddr), nil
+	return core.NewConfig(config.Timeout, password, localAddr, serverAddr), nil
 }
 
 func ReadConfig() *Config {
@@ -66,7 +66,7 @@ func ReadConfig() *Config {
 	config := &Config{
 		Local:    ":8010",
 		Server:   ":8010",
-		Password: ss.RandPassword().String(),
+		Password: core.RandPassword().String(),
 		Timeout:  10 * time.Second,
 	}
 

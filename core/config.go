@@ -1,4 +1,4 @@
-package ss
+package core
 
 import (
 	"time"
