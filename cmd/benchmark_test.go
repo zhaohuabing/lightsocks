@@ -43,9 +43,11 @@ func runEchoServer() {
 			log.Fatalln("listener.Accept", err)
 			continue
 		}
+		log.Println("EchoServer", "listener.Accept")
 		go func() {
 			defer conn.Close()
 			io.Copy(conn, conn)
+			log.Println("EchoServer", "conn.Close")
 		}()
 	}
 }

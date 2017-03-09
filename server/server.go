@@ -27,6 +27,7 @@ func Run() {
 func handleConn(localConn *net.TCPConn) {
 	defer localConn.Close()
 	buf := make([]byte, core.BUF_SIZE)
+
 	/**
 	The localConn connects to the dstServer, and sends a ver
    	identifier/method selection message:
@@ -45,6 +46,7 @@ func handleConn(localConn *net.TCPConn) {
 	if err != nil || buf[0] != 0x05 {
 		return
 	}
+
 	/**
 	The dstServer selects from one of the methods given in METHODS, and
    	sends a METHOD selection message:
@@ -57,6 +59,7 @@ func handleConn(localConn *net.TCPConn) {
 	 */
 	// 不需要验证，直接验证通过
 	core.EncodeWrite(localConn, []byte{0x05, 0x00})
+
 	/**
 	+----+-----+-------+------+----------+----------+
         |VER | CMD |  RSV  | ATYP | DST.ADDR | DST.PORT |
@@ -64,7 +67,14 @@ func handleConn(localConn *net.TCPConn) {
         | 1  |  1  | X'00' |  1   | Variable |    2     |
         +----+-----+-------+------+----------+----------+
 	 */
-	// VER代表Socks协议的版本，Socks5默认为0x05，其值长度为1个字节
+
+	// CMD代表客户端请求的类型，值长度也是1个字节，有三种类型
+	// CONNECT X'01'
+	if buf[1] != 0x01 {
+		// 目前只支持 CONNECT
+		return
+	}
+
 	n, err := core.DecodeRead(localConn, buf)
 	// n 最短的长度为7 情况为 ATYP=3 DST.ADDR占用1字节 值为0x0
 	if err != nil || n < 7 {
@@ -95,6 +105,7 @@ func handleConn(localConn *net.TCPConn) {
 		Port: int(binary.BigEndian.Uint16(dPort)),
 	}
 	dstServer, err := net.DialTCP("tcp", nil, dstAddr)
+
 	/**
 	 +----+-----+-------+------+----------+----------+
         |VER | REP |  RSV  | ATYP | BND.ADDR | BND.PORT |
