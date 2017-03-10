@@ -52,30 +52,25 @@ func runEchoServer() {
 	}
 }
 
-//随机生产 PACK_SIZE byte的[]byte
-func randData() []byte {
+//获取 发送 data 到 echo server 并且收到全部返回 所花费到时间
+func BenchmarkAll(b *testing.B) {
+	//随机生产 PACK_SIZE byte的[]byte
 	data := make([]byte, PACK_SIZE)
 	n, err := rand.Read(data)
 	if err != nil || n != PACK_SIZE {
 		log.Fatalln("rand.Read", err)
 	}
-	return data
-}
-
-//获取 发送 data 到 echo server 并且收到全部返回 所花费到时间
-func BenchmarkAll(b *testing.B) {
-	data := randData()
 	buf := make([]byte, len(data))
 	b.StartTimer()
 	conn, err := socksDialer.Dial("tcp", ECHO_SERVER_ADDR)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	defer conn.Close()
 	go func() {
 		conn.Write(data)
 	}()
 	_, err = io.ReadFull(conn, buf)
+	conn.Close()
 	b.StopTimer()
 	if err != nil {
 		log.Fatalln("io.ReadFull", err)
