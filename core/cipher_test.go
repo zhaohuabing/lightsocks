@@ -3,6 +3,11 @@ package core
 import (
 	"testing"
 	"reflect"
+	"crypto/rand"
+)
+
+const (
+	MB = 1024 * 1024
 )
 
 func TestRandPassword(t *testing.T) {
@@ -27,4 +32,22 @@ func TestNewCipher(t *testing.T) {
 	if !reflect.DeepEqual(org, tmp) {
 		t.Error("encode decode error")
 	}
+}
+
+func BenchmarkEncode(b *testing.B) {
+	password := RandPassword()
+	cipher := NewCipher(password)
+	bs := make([]byte, MB)
+	b.ResetTimer()
+	rand.Read(bs)
+	cipher.encode(bs)
+}
+
+func BenchmarkDecode(b *testing.B) {
+	password := RandPassword()
+	cipher := NewCipher(password)
+	bs := make([]byte, MB)
+	b.ResetTimer()
+	rand.Read(bs)
+	cipher.decode(bs)
 }

@@ -4,10 +4,10 @@ import (
 	"net"
 	"io"
 	"log"
-	"reflect"
 	"golang.org/x/net/proxy"
 	"math/rand"
 	"testing"
+	"reflect"
 )
 
 const (
@@ -54,28 +54,28 @@ func runEchoServer() {
 
 //获取 发送 data 到 echo server 并且收到全部返回 所花费到时间
 func BenchmarkAll(b *testing.B) {
-	//随机生产 PACK_SIZE byte的[]byte
-	data := make([]byte, PACK_SIZE)
-	n, err := rand.Read(data)
-	if err != nil || n != PACK_SIZE {
-		log.Fatalln("rand.Read", err)
-	}
-	buf := make([]byte, len(data))
-	b.StartTimer()
-	conn, err := socksDialer.Dial("tcp", ECHO_SERVER_ADDR)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	go func() {
-		conn.Write(data)
-	}()
-	_, err = io.ReadFull(conn, buf)
-	conn.Close()
-	b.StopTimer()
-	if err != nil {
-		log.Fatalln("io.ReadFull", err)
-	}
-	if !reflect.DeepEqual(data, buf) {
-		log.Fatalln("response data length not equal to org")
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		//随机生产 PACK_SIZE byte的[]byte
+		data := make([]byte, PACK_SIZE)
+		_, err := rand.Read(data)
+		buf := make([]byte, len(data))
+		b.StartTimer()
+		conn, err := socksDialer.Dial("tcp", ECHO_SERVER_ADDR)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		go func() {
+			conn.Write(data)
+		}()
+		_, err = io.ReadFull(conn, buf)
+		conn.Close()
+		b.StopTimer()
+		if err != nil {
+			log.Fatalln("io.ReadFull", err)
+		}
+		if !reflect.DeepEqual(data, buf) {
+			log.Fatalln("response data length not equal to org")
+		}
 	}
 }

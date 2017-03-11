@@ -14,7 +14,10 @@ func Run() {
 		log.Fatalln("listen error:%s", err)
 	}
 	for {
-		localConn, _ := listener.AcceptTCP()
+		localConn, err := listener.AcceptTCP()
+		if err != nil {
+			continue
+		}
 		//localConn被关闭时直接清除所有数据 不管没有发送的数据
 		localConn.SetLinger(0)
 		go handleConn(localConn)
@@ -116,10 +119,10 @@ func handleConn(localConn *net.TCPConn) {
 	if err != nil {
 		return
 	} else {
+		defer dstServer.Close()
 		core.EncodeWrite(localConn, []byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) //响应客户端连接成功
 		dstServer.SetLinger(0)
 		dstServer.SetDeadline(time.Now().Add(core.GlobalConfig.Timeout))
-		defer dstServer.Close()
 	}
 	//进行转发
 	go core.DecodeCopy(dstServer, localConn)

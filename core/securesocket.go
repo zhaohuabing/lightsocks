@@ -44,7 +44,6 @@ func EncodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
 			}
 		}
 	}
-	return nil
 }
 
 func DecodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
@@ -68,7 +67,6 @@ func DecodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
 			}
 		}
 	}
-	return nil
 }
 
 func DialServer() (*net.TCPConn, error) {

@@ -14,7 +14,11 @@ func Run() {
 	}
 	defer listener.Close()
 	for {
-		userConn, _ := listener.AcceptTCP()
+		userConn, err := listener.AcceptTCP()
+		if err != nil {
+			continue
+		}
+		//userConn被关闭时直接清除所有数据 不管没有发送的数据
 		userConn.SetLinger(0)
 		go handleConn(userConn)
 	}
@@ -27,9 +31,9 @@ func handleConn(userConn *net.TCPConn) {
 		log.Println(err)
 		return
 	}
+	defer server.Close()
 	server.SetLinger(0)
 	server.SetDeadline(time.Now().Add(core.GlobalConfig.Timeout))
-	defer server.Close()
 	//进行转发
 	go core.EncodeCopy(server, userConn)
 	core.DecodeCopy(userConn, server)
