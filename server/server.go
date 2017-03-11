@@ -8,8 +8,12 @@ import (
 	"github.com/gwuhaolin/lightsocks/core"
 )
 
-func Run() {
-	listener, err := net.ListenTCP("tcp", core.GlobalConfig.LocalAddr)
+type LsServer struct {
+	*core.SecureSocket
+}
+
+func (server *LsServer) Listen() {
+	listener, err := net.ListenTCP("tcp", server.LocalAddr)
 	if err != nil {
 		log.Fatalln("listen error:%s", err)
 	}
@@ -20,16 +24,16 @@ func Run() {
 		}
 		//localConn被关闭时直接清除所有数据 不管没有发送的数据
 		localConn.SetLinger(0)
-		go handleConn(localConn)
+		go server.handleConn(localConn)
 	}
 }
 
 // socks5实现
 // https://www.ietf.org/rfc/rfc1928.txt
 // http://www.jianshu.com/p/172810a70fad
-func handleConn(localConn *net.TCPConn) {
+func (server *LsServer) handleConn(localConn *net.TCPConn) {
 	defer localConn.Close()
-	buf := make([]byte, core.BUF_SIZE)
+	buf := make([]byte, 256)
 
 	/**
 	The localConn connects to the dstServer, and sends a ver
@@ -44,7 +48,7 @@ func handleConn(localConn *net.TCPConn) {
    	appear in the METHODS field.
 	 */
 	// 第一个字段VER代表Socks的版本，Socks5默认为0x05，其固定长度为1个字节
-	_, err := core.DecodeRead(localConn, buf)
+	_, err := server.DecodeRead(localConn, buf)
 	// 只支持版本5
 	if err != nil || buf[0] != 0x05 {
 		return
@@ -61,7 +65,7 @@ func handleConn(localConn *net.TCPConn) {
                          +----+--------+
 	 */
 	// 不需要验证，直接验证通过
-	core.EncodeWrite(localConn, []byte{0x05, 0x00})
+	server.EncodeWrite(localConn, []byte{0x05, 0x00})
 
 	/**
 	+----+-----+-------+------+----------+----------+
@@ -78,7 +82,7 @@ func handleConn(localConn *net.TCPConn) {
 		return
 	}
 
-	n, err := core.DecodeRead(localConn, buf)
+	n, err := server.DecodeRead(localConn, buf)
 	// n 最短的长度为7 情况为 ATYP=3 DST.ADDR占用1字节 值为0x0
 	if err != nil || n < 7 {
 		return
@@ -120,11 +124,11 @@ func handleConn(localConn *net.TCPConn) {
 		return
 	} else {
 		defer dstServer.Close()
-		core.EncodeWrite(localConn, []byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) //响应客户端连接成功
+		server.EncodeWrite(localConn, []byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) //响应客户端连接成功
 		dstServer.SetLinger(0)
-		dstServer.SetDeadline(time.Now().Add(core.GlobalConfig.Timeout))
+		dstServer.SetDeadline(time.Now().Add(server.Timeout))
 	}
 	//进行转发
-	go core.DecodeCopy(dstServer, localConn)
-	core.EncodeCopy(localConn, dstServer)
+	go server.DecodeCopy(dstServer, localConn)
+	server.EncodeCopy(localConn, dstServer)
 }

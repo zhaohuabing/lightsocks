@@ -4,17 +4,16 @@ import (
 	"log"
 	"github.com/gwuhaolin/lightsocks/server"
 	"github.com/gwuhaolin/lightsocks/cmd"
-	"github.com/gwuhaolin/lightsocks/core"
 )
 
 func main() {
 	var err error
 	config := cmd.ReadConfig()
-	ssConfig, err := config.ToSsConfig()
+	secureSocket, err := config.ToSecureSocket()
 	if err != nil {
 		log.Fatalln(err)
 	}
 	log.Println(config)
-	core.GlobalConfig = ssConfig
-	server.Run()
+	lsServer := &server.LsServer{SecureSocket: secureSocket}
+	lsServer.Listen()
 }

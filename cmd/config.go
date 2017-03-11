@@ -31,7 +31,7 @@ Timeout
 	`, config.Local, config.Server, config.Password, config.Timeout)
 }
 
-func (config *Config) ToSsConfig() (*core.Config, error) {
+func (config *Config) ToSecureSocket() (*core.SecureSocket, error) {
 	password, err := core.ParsePassword(config.Password)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (config *Config) ToSsConfig() (*core.Config, error) {
 		return nil, err
 	}
 
-	return core.NewConfig(config.Timeout, password, localAddr, serverAddr), nil
+	return core.NewSecureSocket(config.Timeout, password, localAddr, serverAddr), nil
 }
 
 func ReadConfig() *Config {

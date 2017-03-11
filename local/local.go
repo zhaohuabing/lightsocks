@@ -7,8 +7,12 @@ import (
 	"github.com/gwuhaolin/lightsocks/core"
 )
 
-func Run() {
-	listener, err := net.ListenTCP("tcp", core.GlobalConfig.LocalAddr)
+type LsLocal struct {
+	*core.SecureSocket
+}
+
+func (local *LsLocal) Listen() {
+	listener, err := net.ListenTCP("tcp", local.LocalAddr)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -20,21 +24,21 @@ func Run() {
 		}
 		//userConn被关闭时直接清除所有数据 不管没有发送的数据
 		userConn.SetLinger(0)
-		go handleConn(userConn)
+		go local.handleConn(userConn)
 	}
 }
 
-func handleConn(userConn *net.TCPConn) {
+func (local *LsLocal) handleConn(userConn *net.TCPConn) {
 	defer userConn.Close()
-	server, err := core.DialServer()
+	server, err := local.DialServer()
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	defer server.Close()
 	server.SetLinger(0)
-	server.SetDeadline(time.Now().Add(core.GlobalConfig.Timeout))
+	server.SetDeadline(time.Now().Add(local.Timeout))
 	//进行转发
-	go core.EncodeCopy(server, userConn)
-	core.DecodeCopy(userConn, server)
+	go local.EncodeCopy(server, userConn)
+	local.DecodeCopy(userConn, server)
 }
