@@ -12,6 +12,7 @@ type LsServer struct {
 	*core.SecureSocket
 }
 
+//运行服务端并且监听
 func (server *LsServer) Listen() {
 	listener, err := net.ListenTCP("tcp", server.LocalAddr)
 	if err != nil {
@@ -26,6 +27,18 @@ func (server *LsServer) Listen() {
 		localConn.SetLinger(0)
 		go server.handleConn(localConn)
 	}
+}
+
+//更新服务端用到的配置
+func (server *LsServer) Update(timeout time.Duration, cipher *core.Cipher) {
+	//TODO 当前还有在用以前的cipher怎么办
+	server.Timeout = timeout
+	server.Cipher = cipher
+}
+
+//停止运行当前服务端并且释放对应资源
+func (server *LsServer) Close() {
+	//TODO 释放所有资源
 }
 
 // socks5实现
