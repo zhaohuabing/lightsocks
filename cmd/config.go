@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"time"
 	"fmt"
 	"os"
 	"encoding/json"
@@ -14,7 +13,6 @@ type Config struct {
 	Local    string `json:"local"`
 	Server   string `json:"remote"`
 	Password string `json:"password"`
-	Timeout  time.Duration `json:"timeout"`
 }
 
 func (config *Config) String() string {
@@ -26,9 +24,7 @@ Remote
 	%s
 Password
 	%s
-Timeout
-	%s
-	`, config.Local, config.Server, config.Password, config.Timeout)
+	`, config.Local, config.Server, config.Password)
 }
 
 func (config *Config) ToSecureSocket() (*core.SecureSocket, error) {
@@ -47,7 +43,7 @@ func (config *Config) ToSecureSocket() (*core.SecureSocket, error) {
 		return nil, err
 	}
 
-	return core.NewSecureSocket(config.Timeout, password, localAddr, serverAddr), nil
+	return core.NewSecureSocket(password, localAddr, serverAddr), nil
 }
 
 func ReadConfig() *Config {
@@ -66,7 +62,6 @@ func ReadConfig() *Config {
 	config := &Config{
 		Local:    ":8010",
 		Password: core.RandPassword().String(),
-		Timeout:  10 * time.Second,
 	}
 	//parse & set Cipher
 	err = json.NewDecoder(file).Decode(config)

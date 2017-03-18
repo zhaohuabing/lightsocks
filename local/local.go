@@ -37,7 +37,7 @@ func (local *LsLocal) handleConn(userConn *net.TCPConn) {
 	}
 	defer server.Close()
 	server.SetLinger(0)
-	server.SetDeadline(time.Now().Add(local.Timeout))
+	server.SetDeadline(time.Now().Add(core.TIMEOUT))
 	//进行转发
 	go local.EncodeCopy(server, userConn)
 	local.DecodeCopy(userConn, server)

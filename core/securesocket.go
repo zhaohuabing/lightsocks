@@ -8,18 +8,19 @@ import (
 	"time"
 )
 
-const BUF_SIZE = 1024
+const (
+	BUF_SIZE = 1024
+	TIMEOUT  = 10 * time.Second
+)
 
 type SecureSocket struct {
-	Timeout    time.Duration
 	Cipher     *Cipher
 	LocalAddr  *net.TCPAddr
 	ServerAddr *net.TCPAddr
 }
 
-func NewSecureSocket(timeout time.Duration, encodePassword *Password, localAddr, serverAddr *net.TCPAddr) *SecureSocket {
+func NewSecureSocket(encodePassword *Password, localAddr, serverAddr *net.TCPAddr) *SecureSocket {
 	return &SecureSocket{
-		Timeout:    timeout,
 		Cipher:     NewCipher(encodePassword),
 		LocalAddr:  localAddr,
 		ServerAddr: serverAddr,

@@ -10,6 +10,7 @@ import (
 
 type LsServer struct {
 	*core.SecureSocket
+	running bool
 }
 
 //运行服务端并且监听
@@ -18,7 +19,9 @@ func (server *LsServer) Listen() {
 	if err != nil {
 		log.Fatalln("listen error:%s", err)
 	}
-	for {
+	defer listener.Close()
+	server.running = true
+	for server.running {
 		localConn, err := listener.AcceptTCP()
 		if err != nil {
 			continue
@@ -30,15 +33,16 @@ func (server *LsServer) Listen() {
 }
 
 //更新服务端用到的配置
-func (server *LsServer) Update(timeout time.Duration, cipher *core.Cipher) {
+func (server *LsServer) Update(cipher *core.Cipher) {
 	//TODO 当前还有在用以前的cipher怎么办
-	server.Timeout = timeout
 	server.Cipher = cipher
 }
 
 //停止运行当前服务端并且释放对应资源
 func (server *LsServer) Close() {
 	//TODO 释放所有资源
+	server.running = false
+	server.SecureSocket = nil
 }
 
 // socks5实现
@@ -139,7 +143,7 @@ func (server *LsServer) handleConn(localConn *net.TCPConn) {
 		defer dstServer.Close()
 		server.EncodeWrite(localConn, []byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}) //响应客户端连接成功
 		dstServer.SetLinger(0)
-		dstServer.SetDeadline(time.Now().Add(server.Timeout))
+		dstServer.SetDeadline(time.Now().Add(core.TIMEOUT))
 	}
 	//进行转发
 	go server.DecodeCopy(dstServer, localConn)
