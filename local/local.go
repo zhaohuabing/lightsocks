@@ -9,14 +9,31 @@ import (
 
 type LsLocal struct {
 	*core.SecureSocket
+	AfterListen func(listenAddr net.Addr)
 }
 
-func (local *LsLocal) Listen() {
+func New(encodePassword *core.Password, localAddr, serverAddr *net.TCPAddr) *LsLocal {
+	return &LsLocal{
+		SecureSocket: &core.SecureSocket{
+			Cipher:     core.NewCipher(encodePassword),
+			LocalAddr:  localAddr,
+			ServerAddr: serverAddr,
+		},
+	}
+}
+
+func (local *LsLocal) Listen() error {
 	listener, err := net.ListenTCP("tcp", local.LocalAddr)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
+
 	defer listener.Close()
+
+	if local.AfterListen != nil {
+		local.AfterListen(listener.Addr())
+	}
+
 	for {
 		userConn, err := listener.AcceptTCP()
 		if err != nil {

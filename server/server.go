@@ -3,24 +3,39 @@ package server
 import (
 	"net"
 	"encoding/binary"
-	"log"
 	"time"
 	"github.com/gwuhaolin/lightsocks/core"
 )
 
 type LsServer struct {
 	*core.SecureSocket
-	running bool
+	running     bool
+	AfterListen func(listenAddr net.Addr)
+}
+
+func New(encodePassword *core.Password, localAddr *net.TCPAddr) *LsServer {
+	return &LsServer{
+		SecureSocket: &core.SecureSocket{
+			Cipher:    core.NewCipher(encodePassword),
+			LocalAddr: localAddr,
+		},
+	}
 }
 
 //运行服务端并且监听
-func (server *LsServer) Listen() {
+func (server *LsServer) Listen() error {
 	listener, err := net.ListenTCP("tcp", server.LocalAddr)
 	if err != nil {
-		log.Fatalln("listen error:%s", err)
+		return err
 	}
+
 	defer listener.Close()
 	server.running = true
+
+	if server.AfterListen != nil {
+		server.AfterListen(listener.Addr())
+	}
+
 	for server.running {
 		localConn, err := listener.AcceptTCP()
 		if err != nil {
@@ -30,6 +45,7 @@ func (server *LsServer) Listen() {
 		localConn.SetLinger(0)
 		go server.handleConn(localConn)
 	}
+	return nil
 }
 
 //更新服务端用到的配置

@@ -19,14 +19,6 @@ type SecureSocket struct {
 	ServerAddr *net.TCPAddr
 }
 
-func NewSecureSocket(encodePassword *Password, localAddr, serverAddr *net.TCPAddr) *SecureSocket {
-	return &SecureSocket{
-		Cipher:     NewCipher(encodePassword),
-		LocalAddr:  localAddr,
-		ServerAddr: serverAddr,
-	}
-}
-
 func (secureSocket *SecureSocket) DecodeRead(conn *net.TCPConn, bs []byte) (n int, err error) {
 	n, err = conn.Read(bs)
 	if err != nil {

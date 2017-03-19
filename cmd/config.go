@@ -5,7 +5,6 @@ import (
 	"os"
 	"encoding/json"
 	"log"
-	"net"
 	"github.com/gwuhaolin/lightsocks/core"
 )
 
@@ -25,25 +24,6 @@ Remote
 Password
 	%s
 	`, config.Local, config.Server, config.Password)
-}
-
-func (config *Config) ToSecureSocket() (*core.SecureSocket, error) {
-	password, err := core.ParsePassword(config.Password)
-	if err != nil {
-		return nil, err
-	}
-
-	localAddr, err := net.ResolveTCPAddr("tcp", config.Local)
-	if err != nil {
-		return nil, err
-	}
-
-	serverAddr, err := net.ResolveTCPAddr("tcp", config.Server)
-	if err != nil {
-		return nil, err
-	}
-
-	return core.NewSecureSocket(password, localAddr, serverAddr), nil
 }
 
 func ReadConfig() *Config {
