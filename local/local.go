@@ -12,6 +12,12 @@ type LsLocal struct {
 	AfterListen func(listenAddr net.Addr)
 }
 
+//新建一个本地端
+//本地端的职责是:
+//0.监听来自本地浏览器的代理请求
+//1.转发前加密数据
+//2.转发socket数据到服务端
+//3.把服务端返回的数据转发给用户的浏览器
 func New(encodePassword *core.Password, localAddr, serverAddr *net.TCPAddr) *LsLocal {
 	return &LsLocal{
 		SecureSocket: &core.SecureSocket{
@@ -22,6 +28,7 @@ func New(encodePassword *core.Password, localAddr, serverAddr *net.TCPAddr) *LsL
 	}
 }
 
+//本地端启动监听给用户的浏览器调用
 func (local *LsLocal) Listen() error {
 	listener, err := net.ListenTCP("tcp", local.LocalAddr)
 	if err != nil {

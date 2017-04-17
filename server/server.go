@@ -13,6 +13,11 @@ type LsServer struct {
 	AfterListen func(listenAddr net.Addr)
 }
 
+//新建一个服务端
+//服务端的职责是:
+//0.监听来自本地端请求
+//1.解密本地端请求的数据，解析socks5协议，连接用户浏览器真正想要连接的远程服务器
+//2.加密后转发用户浏览器真正想要连接的远程服务器返回的数据到本地端
 func New(encodePassword *core.Password, localAddr *net.TCPAddr) *LsServer {
 	return &LsServer{
 		SecureSocket: &core.SecureSocket{
@@ -22,7 +27,7 @@ func New(encodePassword *core.Password, localAddr *net.TCPAddr) *LsServer {
 	}
 }
 
-//运行服务端并且监听
+//运行服务端并且监听来自本地端的请求
 func (server *LsServer) Listen() error {
 	listener, err := net.ListenTCP("tcp", server.LocalAddr)
 	if err != nil {
@@ -46,12 +51,6 @@ func (server *LsServer) Listen() error {
 		go server.handleConn(localConn)
 	}
 	return nil
-}
-
-//更新服务端用到的配置
-func (server *LsServer) Update(cipher *core.Cipher) {
-	//TODO 当前还有在用以前的cipher怎么办
-	server.Cipher = cipher
 }
 
 //停止运行当前服务端并且释放对应资源

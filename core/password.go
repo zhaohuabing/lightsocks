@@ -18,10 +18,12 @@ func init() {
 	rand.Seed(time.Now().Unix())
 }
 
+//采用base64编码把密码转换为字符串
 func (password *Password) String() string {
 	return base64.StdEncoding.EncodeToString(password[:])
 }
 
+//解析采用base64编码的字符串获取密码
 func ParsePassword(passwordString string) (*Password, error) {
 	bs, err := base64.StdEncoding.DecodeString(strings.TrimSpace(passwordString))
 	if err != nil || len(bs) != PASSWORD_LENGTH {
