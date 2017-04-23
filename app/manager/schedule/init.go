@@ -10,8 +10,8 @@ var (
 )
 
 func Start() {
-	log.Println("schedule", "start")
 	for range ticker.C {
+		log.Println("schedule", "start")
 		CheckAllServersAlive()
 	}
 }

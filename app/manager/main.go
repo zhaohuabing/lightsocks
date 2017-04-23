@@ -1,13 +1,15 @@
 package main
 
 import (
-	"github.com/gwuhaolin/lightsocks/app/manager/rpc"
-	"github.com/gwuhaolin/lightsocks/app/manager/model"
 	"github.com/gwuhaolin/lightsocks/app/manager/schedule"
+	"github.com/gwuhaolin/lightsocks/app/manager/http"
+	"github.com/gwuhaolin/lightsocks/app/manager/dao"
+	"github.com/gwuhaolin/lightsocks/app/manager/rpc/listener"
 )
 
 func main() {
-	model.InitDB()
+	dao.InitDB()
 	go schedule.Start()
-	rpc.ListenRPC()
+	go listener.ListenRPC()
+	http.ListenHTTP()
 }

@@ -1,7 +1,9 @@
 package main
 
-import "github.com/gwuhaolin/lightsocks/app/server/rpc"
+import (
+	"github.com/gwuhaolin/lightsocks/app/server/rpc/listener"
+)
 
 func main() {
-	rpc.ListenRPC()
+	listener.ListenRPC()
 }

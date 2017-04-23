@@ -29,7 +29,8 @@ func HostPublicIP() string {
 	if len(ip) == 0 {
 		log.Fatalln("你的服务器不能连接到外网")
 	}
-	return string(ip)
+	//return string(ip)
+	return "127.0.0.1" // TODO 本地测试用
 }
 
 /**

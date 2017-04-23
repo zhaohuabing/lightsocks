@@ -1,23 +1,25 @@
 package schedule
 
 import (
-	"github.com/gwuhaolin/lightsocks/app/manager/model"
-	"github.com/gwuhaolin/lightsocks/app/manager/rpc"
 	"log"
+	"github.com/gwuhaolin/lightsocks/app/manager/dao"
+	"github.com/gwuhaolin/lightsocks/app/manager/rpc/caller"
 )
 
 func CheckAllServersAlive() {
 	log.Println("schedule", "CheckAllServersAlive")
-	servers, _ := model.GetAllServers()
+	servers, _ := dao.FindAllServers()
 	for _, server := range servers {
 		go func() {
-			status, err := rpc.CallHeartbeat(server)
+			status, err := caller.CallGetStatus(server)
 			if err != nil {
-				server.UpdateAlive(false)
-				server.UpdateStatus(nil)
+				server.Alive = false
+				server.Status = nil
+				dao.SaveServer(server)
 			} else {
-				server.UpdateAlive(true)
-				server.UpdateStatus(status)
+				server.Alive = true
+				server.Status = status
+				dao.SaveServer(server)
 			}
 		}()
 	}

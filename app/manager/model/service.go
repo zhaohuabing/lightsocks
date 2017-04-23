@@ -1,24 +1,30 @@
 package model
 
-import "github.com/gwuhaolin/lightsocks/core"
+import (
+	"strings"
+	"strconv"
+)
 
 type Service struct {
-	Ip       string
-	Port     int
-	Password *core.Password
+	Addr     string `json:"addr"`
+	Password string `json:"password"`
 }
 
-func AllServicesByIp(ip string) ([]*Service, error) {
-	rows, err := DB.Query("Service.AllServicesByIp", ip)
-	if err != nil {
-		return nil, err
+func (service *Service) Port() int {
+	arr := strings.Split(service.Addr, ":")
+	if len(arr) == 2 {
+		port, _ := strconv.Atoi(arr[1])
+		return port
+	} else {
+		return 0
 	}
-	services := []*Service{}
-	for rows.Next() {
-		service := &Service{}
-		if err := rows.Scan(&service.Port, &service.Password); err == nil {
-			services = append(services, service)
-		}
+}
+
+func (service *Service) Ip() string {
+	arr := strings.Split(service.Addr, ":")
+	if len(arr) == 2 {
+		return arr[0]
+	} else {
+		return ""
 	}
-	return services, nil
 }
