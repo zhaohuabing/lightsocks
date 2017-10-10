@@ -15,14 +15,14 @@
 #### 启动 lightsocks-server
 在墙外服务器下载好 lightsocks-server 后，执行命令：
 ```bash
-./lightsocks-server [./path/to/config.json]
+./lightsocks-server
 ```
 就可启动服务端。
 
 #### 启动 lightsocks-local
 在本地电脑下载好 lightsocks-local 后，执行命令：
 ```bash
-./lightsocks-local [./path/to/config.json]
+./lightsocks-local
 ```
 就可启动本地代理客户端。
 
@@ -41,8 +41,8 @@
 - password 会自动生成，不要自己生成。 
 
 
-只能通过 JSON 文件的方式传参给 lightsocks-local 和 lightsocks-server，
-例如启动时执行命令 `./lightsocks-local config.json`，则 `config.json` 文件内容需如下：
+只能通过 JSON 文件的方式传参给 lightsocks-local 和 lightsocks-server，启动后会在用户目录下生成 `~/.lightsocksrc` 文件用于存储配置，
+其格式为 JSON，内容大致如下：
 ```json
 {
   "remote": "45.56.76.5:7474",
