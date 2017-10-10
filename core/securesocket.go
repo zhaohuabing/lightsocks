@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	BUF_SIZE = 1024
-	TIMEOUT  = 10 * time.Second
+	BufSize = 1024
+	TIMEOUT = 10 * time.Second
 )
 
 type SecureSocket struct {
@@ -37,7 +37,7 @@ func (secureSocket *SecureSocket) EncodeWrite(conn *net.TCPConn, bs []byte) (int
 
 //从src中源源不断的读取原数据加密后写入到dst，直到src中没有数据可以再读取
 func (secureSocket *SecureSocket) EncodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
-	buf := make([]byte, BUF_SIZE)
+	buf := make([]byte, BufSize)
 	for {
 		nr, er := src.Read(buf)
 		if nr > 0 {
@@ -61,7 +61,7 @@ func (secureSocket *SecureSocket) EncodeCopy(dst *net.TCPConn, src *net.TCPConn)
 
 //从src中源源不断的读取加密后的数据解密后写入到dst，直到src中没有数据可以再读取
 func (secureSocket *SecureSocket) DecodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
-	buf := make([]byte, BUF_SIZE)
+	buf := make([]byte, BufSize)
 	for {
 		nr, er := secureSocket.DecodeRead(src, buf)
 		if nr > 0 {

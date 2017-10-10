@@ -18,11 +18,11 @@ func TestNewCipher(t *testing.T) {
 	password := RandPassword()
 	t.Log(password)
 	cipher := NewCipher(password)
-	org := make([]byte, PASSWORD_LENGTH)
-	for i := 0; i < PASSWORD_LENGTH; i++ {
+	org := make([]byte, PasswordLength)
+	for i := 0; i < PasswordLength; i++ {
 		org[i] = byte(i)
 	}
-	tmp := make([]byte, PASSWORD_LENGTH)
+	tmp := make([]byte, PasswordLength)
 	copy(tmp, org)
 	t.Log(tmp)
 	cipher.encode(tmp)
