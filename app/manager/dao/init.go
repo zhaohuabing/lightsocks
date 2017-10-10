@@ -25,7 +25,7 @@ func InitDB() {
 		panic(err)
 	}
 
-	//Server
+	//RemoteAddr
 	connPool.Prepare("SaveServer", `
 	INSERT INTO "server" (ip, alive, port, status, updateat) VALUES ($1, $2, $3, $4, $5)
 	ON CONFLICT (ip)

@@ -9,44 +9,43 @@ import (
 )
 
 type Config struct {
-	Local    string `json:"local"`
-	Server   string `json:"remote"`
-	Password string `json:"password"`
+	ListenAddr string `json:"listen"`
+	RemoteAddr string `json:"remote"`
+	Password   string `json:"password"`
 }
 
 func (config *Config) String() string {
 	return fmt.Sprintf(`
 === Use Config ===
-Local
+Listen Address
 	%s
-Remote
+Remote Address
 	%s
 Password
 	%s
-	`, config.Local, config.Server, config.Password)
+	`, config.ListenAddr, config.RemoteAddr, config.Password)
 }
 
 func ReadConfig() *Config {
-	if len(os.Args) != 2 {
-		log.Fatalln(`require param json util file path, call like this:
-		ls-exec ./path/to/json/util/file/path
-		`)
-	}
-	filePath := os.Args[1]
-	file, err := os.Open(filePath)
-	if err != nil {
-		log.Fatalln("open file %s error:%s", filePath, err)
-	}
-	defer file.Close()
-
 	config := &Config{
-		Local:    ":8010",
-		Password: core.RandPassword().String(),
+		ListenAddr: ":7474",
+		RemoteAddr: ":7474",
+		Password:   core.RandPassword().String(),
 	}
-	//parse & set Cipher
-	err = json.NewDecoder(file).Decode(config)
-	if err != nil {
-		log.Fatalln(fmt.Sprintf("invalid json util file:\n%s", file))
+
+	if len(os.Args) == 2 {
+		filePath := os.Args[1]
+		file, err := os.Open(filePath)
+		if err != nil {
+			log.Fatalf("open file %s error:%s", filePath, err)
+		}
+		defer file.Close()
+
+		//parse & set Cipher
+		err = json.NewDecoder(file).Decode(config)
+		if err != nil {
+			log.Fatalf("invalid json config file:\n%s", file)
+		}
 	}
 	return config
 }
