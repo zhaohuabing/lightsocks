@@ -12,13 +12,14 @@
 - **lightsocks-server**：用于运行在墙外服务器的客户端，会还原混淆数据；
 
 ## 启动
+#### 启动 lightsocks-server
 在墙外服务器下载好 lightsocks-server 后，执行命令：
 ```bash
 ./lightsocks-server [./path/to/config.json]
 ```
 就可启动服务端。
 
-
+#### 启动 lightsocks-local
 在本地电脑下载好 lightsocks-local 后，执行命令：
 ```bash
 ./lightsocks-local [./path/to/config.json]
@@ -26,16 +27,16 @@
 就可启动本地代理客户端。
 
 ## 配置
-lightsocks-local 支持的选项：
+#### lightsocks-local 支持的选项：
 - **password**：用于加密数据的密码，字符串格式，在没有填时会自动生成；
 - **listen**：本地 SOCKS5 代理客户端的监听地址，格式为 `ip:port`，默认为 `0.0.0.0:7474`；
 - **remote**：墙外服务器的监听地址，格式为 `ip:port`，默认为 `0.0.0.0:7474`。
 
-lightsocks-server 支持的选项：
+#### lightsocks-server 支持的选项：
 - **password**：用于加密数据的密码，字符串格式，在没有填时会自动生成；
 - **listen**：本地 SOCKS5 代理客户端的监听地址，格式为 `ip:port`，默认为 `0.0.0.0:7474`。
 
-注意：
+#### 注意：
 - lightsocks-local 和 lightsocks-server 的 password 必须一致才能正常翻墙，password 不要泄露。
 - password 会自动生成，不要自己生成。 
 
