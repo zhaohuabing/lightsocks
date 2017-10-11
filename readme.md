@@ -22,12 +22,12 @@
 本地监听地址 listen：
 :7448
 密码 password：
-/CkbebiZqJjSd44zl7be9ZOhiXgmlA+bJOwwtx9yLsOCXvlzDGzGjwfjYmGnZlJahNiF3TwEYIvl1X0gSKLm/zL22cVVGlO9hkKwW2M0kdPEdEFkNs4sLwgW+AP9QG7z4We1nCt8b7Gv4Aum8BMn6K6ySgkKQyL6ezU/9wWdBrSa1n9qKI2DMb+72vFQcNvHTedXlYhoEB6qOA4h7kxLANQ9bRJYN6PJRNfiqYrMrC3C0LlUXEXRugE6cZIN7a2MVnbIeu/qkJagpMslThxRdfKzEcFf3Ek7FEZl6z68GV3K/h2lKoA5zQL7z55ZfhXkwJ9Pgd9pI2u+h6sY6RdH9A==
+******
 ```
 假如服务器的 IP 是 45.56.76.5，则以上日志的含义是指：
 
 - 服务监听在 `45.56.76.5:7448`
-- 使用的密码是  `/CkbebiZqJjSd44zl7be9ZOhiXgmlA+bJOwwtx9yLsOCXvlzDGzGjwfjYmGnZlJahNiF3TwEYIvl1X0gSKLm/zL22cVVGlO9hkKwW2M0kdPEdEFkNs4sLwgW+AP9QG7z4We1nCt8b7Gv4Aum8BMn6K6ySgkKQyL6ezU/9wWdBrSa1n9qKI2DMb+72vFQcNvHTedXlYhoEB6qOA4h7kxLANQ9bRJYN6PJRNfiqYrMrC3C0LlUXEXRugE6cZIN7a2MVnbIeu/qkJagpMslThxRdfKzEcFf3Ek7FEZl6z68GV3K/h2lKoA5zQL7z55ZfhXkwJ9Pgd9pI2u+h6sY6RdH9A==`
+- 使用的密码是  `******`
 
 #### 启动 lightsocks-local
 在本地电脑下载好 lightsocks-local 后，执行命令：
@@ -44,7 +44,7 @@
 ```json
 {
   "remote": "45.56.76.5:7448",
-  "password": "/CkbebiZqJjSd44zl7be9ZOhiXgmlA+bJOwwtx9yLsOCXvlzDGzGjwfjYmGnZlJahNiF3TwEYIvl1X0gSKLm/zL22cVVGlO9hkKwW2M0kdPEdEFkNs4sLwgW+AP9QG7z4We1nCt8b7Gv4Aum8BMn6K6ySgkKQyL6ezU/9wWdBrSa1n9qKI2DMb+72vFQcNvHTedXlYhoEB6qOA4h7kxLANQ9bRJYN6PJRNfiqYrMrC3C0LlUXEXRugE6cZIN7a2MVnbIeu/qkJagpMslThxRdfKzEcFf3Ek7FEZl6z68GV3K/h2lKoA5zQL7z55ZfhXkwJ9Pgd9pI2u+h6sY6RdH9A=="
+  "password": "******"
 }
 ```
 重新启动 lightsocks-local 后，再使用监听在 `127.0.0.1:7448` 的本地 SOCK5 服务就可以翻墙成功了。
@@ -69,7 +69,7 @@
 ```json
 {
   "remote": "45.56.76.5:7448",
-  "password": "..."
+  "password": "******"
 }
 ```
 
