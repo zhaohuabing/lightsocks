@@ -1,6 +1,6 @@
 builds:
   - binary: lightsocks-local
-    main: ./cmd/ls-local/main.go
+    main: ./cmd/lightsocks-local/main.go
     goos:
        - windows
        - darwin
@@ -11,7 +11,7 @@ builds:
        - 386
        - arm
   - binary: lightsocks-server
-    main: ./cmd/ls-server/main.go
+    main: ./cmd/lightsocks-server/main.go
     goos:
        - windows
        - darwin
