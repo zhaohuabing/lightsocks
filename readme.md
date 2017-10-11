@@ -52,12 +52,12 @@
 ## 配置
 #### lightsocks-local 支持的选项：
 - **password**：用于加密数据的密码，字符串格式，在没有填时会自动生成；
-- **listen**：本地 SOCKS5 代理客户端的监听地址，格式为 `ip:port`，默认为 `0.0.0.0:7474`；
-- **remote**：墙外服务器的监听地址，格式为 `ip:port`，默认为 `0.0.0.0:7474`。
+- **listen**：本地 SOCKS5 代理客户端的监听地址，格式为 `ip:port`，默认为 `0.0.0.0:7448`；
+- **remote**：墙外服务器的监听地址，格式为 `ip:port`，默认为 `0.0.0.0:7448`。
 
 #### lightsocks-server 支持的选项：
 - **password**：用于加密数据的密码，字符串格式，在没有填时会自动生成；
-- **listen**：本地 SOCKS5 代理客户端的监听地址，格式为 `ip:port`，默认为 `0.0.0.0:7474`。
+- **listen**：本地 SOCKS5 代理客户端的监听地址，格式为 `ip:port`，默认为 `0.0.0.0:7448`。
 
 #### 注意：
 - lightsocks-local 和 lightsocks-server 的 password 必须一致才能正常翻墙，password 不要泄露。
@@ -68,7 +68,7 @@
 其格式为 JSON，内容大致如下：
 ```json
 {
-  "remote": "45.56.76.5:7474",
+  "remote": "45.56.76.5:7448",
   "password": "..."
 }
 ```
