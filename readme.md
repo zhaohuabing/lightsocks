@@ -39,7 +39,7 @@
 2017/10/11 10:03:16 保存配置到文件 /Users/username/.lightsocks.json 成功
 2017/10/11 10:03:16 lightsocks-client:master 启动成功 监听在 [::]:7448
 ```
-这表面生成了一份配置文件到 `/Users/username/.lightsocks.json`。
+这表明生成了一份配置文件到 `/Users/username/.lightsocks.json`。
 为了让客户端用指定的密码去连接服务器，需要给客户端传入参数，为此需要修改该配置文件为如下：
 ```json
 {
@@ -61,7 +61,7 @@
 
 #### 注意：
 - lightsocks-local 和 lightsocks-server 的 password 必须一致才能正常翻墙，password 不要泄露。
-- password 会自动生成，不要自己生成。 
+- password 会自动生成，不要自己生成。一般采用拷贝 lightsocks-server 生成的密码到 lightsocks-local 使用的本地配置文件中。
 
 
 只能通过 JSON 文件的方式传参给 lightsocks-local 和 lightsocks-server，启动前会去 `~/.lightsocks.json` 文件中读取配置，启动后会把配置保存在 `~/.lightsocks.json` 文件中，
