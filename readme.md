@@ -64,7 +64,7 @@
 - password 会自动生成，不要自己生成。 
 
 
-只能通过 JSON 文件的方式传参给 lightsocks-local 和 lightsocks-server，启动后会在用户目录下生成 `~/.lightsocks.json` 文件用于存储配置，
+只能通过 JSON 文件的方式传参给 lightsocks-local 和 lightsocks-server，启动前会去 `~/.lightsocks.json` 文件中读取配置，启动后会把配置保存在 `~/.lightsocks.json` 文件中，
 其格式为 JSON，内容大致如下：
 ```json
 {
