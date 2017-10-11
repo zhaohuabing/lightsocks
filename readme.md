@@ -2,7 +2,7 @@
 
 # Lightsocks
 一个轻量级网络混淆代理，基于 SOCKS5 协议，可用来代替 Shadowsocks。
-采用更高效的算法，专注于翻墙，更快，占用资源更少。
+采用更高效的算法，专注于翻墙，更快，占用资源更少，纯 Golang 编写跨平台。
 
 ## 安装
 去 [releases](https://github.com/gwuhaolin/lightsocks/releases) 页下载最新的可执行文件，注意选择正确的操作系统和位数。
