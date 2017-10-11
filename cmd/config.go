@@ -22,19 +22,7 @@ var configPath string
 
 func init() {
 	home, _ := homedir.Dir()
-	configPath = path.Join(home, ".lightsocksrc")
-}
-
-func (config *Config) String() string {
-	return fmt.Sprintf(`
-=== Use Config ===
-Listen Address
-	%s
-Remote Address
-	%s
-Password
-	%s
-	`, config.ListenAddr, config.RemoteAddr, config.Password)
+	configPath = path.Join(home, ".lightsocks.json")
 }
 
 // 保存配置到配置文件
@@ -42,31 +30,31 @@ func (config *Config) SaveConfig() {
 	configJson, _ := json.MarshalIndent(config, "", "	")
 	err := ioutil.WriteFile(configPath, configJson, 0644)
 	if err != nil {
-		fmt.Errorf("save config error: %s", err)
+		fmt.Errorf("保存配置到文件 %s 出错: %s", configPath, err)
 	}
-	log.Printf("save config successful to %s\n", configPath)
+	log.Printf("保存配置到文件 %s 成功\n", configPath)
 }
 
 func ReadConfig() *Config {
 	config := &Config{
-		ListenAddr: ":7474",
-		RemoteAddr: ":7474",
+		ListenAddr: ":7448",
+		RemoteAddr: ":7448",
 		Password:   core.RandPassword().String(),
 	}
 
+	// 如果配置文件存在，就采用配置文件中的配置
 	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
-		// 如果配置文件存在，就采用配置文件中的配置
-		log.Printf("use config form %s\n", configPath)
+		log.Printf("从文件 %s 中读取配置\n", configPath)
 		file, err := os.Open(configPath)
 		if err != nil {
-			log.Fatalf("open config file %s error:%s", configPath, err)
+			log.Fatalf("打开文件 %s 出错:%s", configPath, err)
 		}
 		defer file.Close()
 
 		// parse & set Cipher
 		err = json.NewDecoder(file).Decode(config)
 		if err != nil {
-			log.Fatalf("invalid config file:\n%s", file)
+			log.Fatalf("格式不合法的 JSON 配置文件:\n%s", file)
 		}
 	}
 	config.SaveConfig()

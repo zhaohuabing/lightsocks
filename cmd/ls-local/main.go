@@ -6,6 +6,7 @@ import (
 	"github.com/gwuhaolin/lightsocks/cmd"
 	"github.com/gwuhaolin/lightsocks/core"
 	"net"
+	"fmt"
 )
 
 var version = "master"
@@ -27,7 +28,15 @@ func main() {
 	}
 	lsLocal := local.New(password, localAddr, serverAddr)
 	lsLocal.AfterListen = func(listenAddr net.Addr) {
-		log.Printf("lightsocks:%s listen on "+listenAddr.String()+config.String(), version)
+		log.Printf("lightsocks-client:%s 启动成功 监听在 %s\n", version, listenAddr.String())
+		log.Println("使用配置：", fmt.Sprintf(`
+本地监听地址 listen：
+%s
+远程服务地址 remote：
+%s
+密码 password：
+%s
+	`, config.ListenAddr, config.RemoteAddr, config.Password))
 	}
 	log.Fatalln(lsLocal.Listen())
 }
