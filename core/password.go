@@ -36,7 +36,7 @@ func ParsePassword(passwordString string) (*Password, error) {
 }
 
 // 产生 256个byte随机组合的 密码，最后会使用base64编码为字符串存储在配置文件中
-// 不会出现如何一个byte位出现重复
+// 不能出现任何一个重复的byte位，必须又 0-255 组成，并且都需要包含
 func RandPassword() *Password {
 	intArr := rand.Perm(PasswordLength)
 	password := &Password{}
