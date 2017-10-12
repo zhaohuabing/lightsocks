@@ -18,15 +18,17 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	localAddr, err := net.ResolveTCPAddr("tcp", config.ListenAddr)
+	listenAddr, err := net.ResolveTCPAddr("tcp", config.ListenAddr)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	serverAddr, err := net.ResolveTCPAddr("tcp", config.RemoteAddr)
+	remoteAddr, err := net.ResolveTCPAddr("tcp", config.RemoteAddr)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	lsLocal := local.New(password, localAddr, serverAddr)
+	
+	// 启动 local 端并监听
+	lsLocal := local.New(password, listenAddr, remoteAddr)
 	lsLocal.AfterListen = func(listenAddr net.Addr) {
 		log.Printf("lightsocks-client:%s 启动成功 监听在 %s\n", version, listenAddr.String())
 		log.Println("使用配置：", fmt.Sprintf(`
@@ -36,7 +38,7 @@ func main() {
 %s
 密码 password：
 %s
-	`, config.ListenAddr, config.RemoteAddr, config.Password))
+	`, listenAddr, remoteAddr, password))
 	}
 	log.Fatalln(lsLocal.Listen())
 }

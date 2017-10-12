@@ -18,11 +18,13 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	localAddr, err := net.ResolveTCPAddr("tcp", config.ListenAddr)
+	listenAddr, err := net.ResolveTCPAddr("tcp", config.ListenAddr)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	lsServer := server.New(password, localAddr)
+
+	// 启动 server 端并监听
+	lsServer := server.New(password, listenAddr)
 	lsServer.AfterListen = func(listenAddr net.Addr) {
 		log.Printf("lightsocks-server:%s 启动成功 监听在 %s\n", version, listenAddr.String())
 		log.Println("使用配置：", fmt.Sprintf(`
@@ -30,7 +32,7 @@ func main() {
 %s
 密码 password：
 %s
-	`, config.ListenAddr, config.Password))
+	`, listenAddr, password))
 	}
 	log.Fatalln(lsServer.Listen())
 }

@@ -13,10 +13,11 @@ const (
 	TIMEOUT = 10 * time.Second
 )
 
+// 加密传输的 TCP Socket
 type SecureSocket struct {
 	Cipher     *Cipher
-	LocalAddr  *net.TCPAddr
-	ServerAddr *net.TCPAddr
+	ListenAddr *net.TCPAddr
+	RemoteAddr *net.TCPAddr
 }
 
 // 从输入流里读取加密过的数据，解密后把原数据放到bs里
@@ -83,11 +84,11 @@ func (secureSocket *SecureSocket) DecodeCopy(dst *net.TCPConn, src *net.TCPConn)
 	}
 }
 
-// 和远程的socket建立连接，他们直接的数据会加密传输
+// 和远程的socket建立连接，他们直接的数据传输会加密
 func (secureSocket *SecureSocket) DialServer() (*net.TCPConn, error) {
-	remoteConn, err := net.DialTCP("tcp", nil, secureSocket.ServerAddr)
+	remoteConn, err := net.DialTCP("tcp", nil, secureSocket.RemoteAddr)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("连接到远程服务器 %s 失败:%s", secureSocket.ServerAddr, err))
+		return nil, errors.New(fmt.Sprintf("连接到远程服务器 %s 失败:%s", secureSocket.RemoteAddr, err))
 	}
 	return remoteConn, nil
 }

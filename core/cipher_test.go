@@ -4,49 +4,30 @@ import (
 	"testing"
 	"reflect"
 	"crypto/rand"
-	"sort"
 )
 
 const (
 	MB = 1024 * 1024
 )
 
-func (password *Password) Len() int {
-	return PasswordLength
-}
-
-func (password *Password) Less(i, j int) bool {
-	return password[i] < password[j]
-}
-
-func (password *Password) Swap(i, j int) {
-	password[i], password[j] = password[j], password[i]
-}
-
-func TestRandPassword(t *testing.T) {
-	password := RandPassword()
-	t.Log(password)
-	sort.Sort(password)
-	for i := 0; i < PasswordLength; i++ {
-		if password[i] != byte(i) {
-			t.Error("不能出现任何一个重复的byte位，必须又 0-255 组成，并且都需要包含")
-		}
-	}
-}
-
-func TestNewCipher(t *testing.T) {
+// 测试 Cipher 加密解密
+func TestCipher(t *testing.T) {
 	password := RandPassword()
 	t.Log(password)
 	cipher := NewCipher(password)
+	// 原数据
 	org := make([]byte, PasswordLength)
 	for i := 0; i < PasswordLength; i++ {
 		org[i] = byte(i)
 	}
+	// 复制一份原数据到 tmp
 	tmp := make([]byte, PasswordLength)
 	copy(tmp, org)
 	t.Log(tmp)
+	// 加密 tmp
 	cipher.encode(tmp)
 	t.Log(tmp)
+	// 解密 tmp
 	cipher.decode(tmp)
 	t.Log(tmp)
 	if !reflect.DeepEqual(org, tmp) {

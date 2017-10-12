@@ -11,6 +11,11 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
+const (
+	ConfigFileName    = ".lightsocks.json"
+	DefaultListenAddr = ":7448"
+)
+
 type Config struct {
 	ListenAddr string `json:"listen"`
 	RemoteAddr string `json:"remote"`
@@ -22,7 +27,7 @@ var configPath string
 
 func init() {
 	home, _ := homedir.Dir()
-	configPath = path.Join(home, ".lightsocks.json")
+	configPath = path.Join(home, ConfigFileName)
 }
 
 // 保存配置到配置文件
@@ -37,13 +42,13 @@ func (config *Config) SaveConfig() {
 
 func ReadConfig() *Config {
 	config := &Config{
-		ListenAddr: ":7448",
-		RemoteAddr: ":7448",
+		ListenAddr: DefaultListenAddr,
+		RemoteAddr: DefaultListenAddr,
 		Password:   core.RandPassword().String(),
 	}
 
 	// 如果配置文件存在，就采用配置文件中的配置
-	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
+	if _, err := os.Stat(configPath); os.IsExist(err) {
 		log.Printf("从文件 %s 中读取配置\n", configPath)
 		file, err := os.Open(configPath)
 		if err != nil {

@@ -19,19 +19,19 @@ type LsLocal struct {
 // 1.转发前加密数据
 // 2.转发socket数据到服务端
 // 3.把服务端返回的数据转发给用户的浏览器
-func New(encodePassword *core.Password, localAddr, serverAddr *net.TCPAddr) *LsLocal {
+func New(password *core.Password, listenAddr, remoteAddr *net.TCPAddr) *LsLocal {
 	return &LsLocal{
 		SecureSocket: &core.SecureSocket{
-			Cipher:     core.NewCipher(encodePassword),
-			LocalAddr:  localAddr,
-			ServerAddr: serverAddr,
+			Cipher:     core.NewCipher(password),
+			ListenAddr: listenAddr,
+			RemoteAddr: remoteAddr,
 		},
 	}
 }
 
 // 本地端启动监听给用户的浏览器调用
 func (local *LsLocal) Listen() error {
-	listener, err := net.ListenTCP("tcp", local.LocalAddr)
+	listener, err := net.ListenTCP("tcp", local.ListenAddr)
 	if err != nil {
 		return err
 	}
