@@ -48,7 +48,7 @@ func ReadConfig() *Config {
 	}
 
 	// 如果配置文件存在，就采用配置文件中的配置
-	if _, err := os.Stat(configPath); os.IsExist(err) {
+	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
 		log.Printf("从文件 %s 中读取配置\n", configPath)
 		file, err := os.Open(configPath)
 		if err != nil {
