@@ -9,7 +9,6 @@ import (
 
 type LsServer struct {
 	*core.SecureSocket
-	running     bool
 	AfterListen func(listenAddr net.Addr)
 }
 
@@ -35,13 +34,12 @@ func (server *LsServer) Listen() error {
 	}
 
 	defer listener.Close()
-	server.running = true
 
 	if server.AfterListen != nil {
 		server.AfterListen(listener.Addr())
 	}
 
-	for server.running {
+	for {
 		localConn, err := listener.AcceptTCP()
 		if err != nil {
 			continue
@@ -51,13 +49,6 @@ func (server *LsServer) Listen() error {
 		go server.handleConn(localConn)
 	}
 	return nil
-}
-
-// 停止运行当前服务端并且释放对应资源
-func (server *LsServer) Close() {
-	// TODO 释放所有资源
-	server.running = false
-	server.SecureSocket = nil
 }
 
 // socks5实现

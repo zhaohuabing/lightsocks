@@ -9,7 +9,6 @@ import (
 
 type LsLocal struct {
 	*core.SecureSocket
-	running     bool
 	AfterListen func(listenAddr net.Addr)
 }
 
@@ -37,13 +36,12 @@ func (local *LsLocal) Listen() error {
 	}
 
 	defer listener.Close()
-	local.running = true
 
 	if local.AfterListen != nil {
 		local.AfterListen(listener.Addr())
 	}
 
-	for local.running {
+	for {
 		userConn, err := listener.AcceptTCP()
 		if err != nil {
 			continue
@@ -53,13 +51,6 @@ func (local *LsLocal) Listen() error {
 		go local.handleConn(userConn)
 	}
 	return nil
-}
-
-// 停止运行当前服务端并且释放对应资源
-func (local *LsLocal) Close() {
-	// TODO 释放所有资源
-	local.running = false
-	local.SecureSocket = nil
 }
 
 func (local *LsLocal) handleConn(userConn *net.TCPConn) {
