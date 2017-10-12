@@ -5,10 +5,10 @@ import (
 	"os"
 	"encoding/json"
 	"log"
-	"github.com/gwuhaolin/lightsocks/core"
-	"github.com/mitchellh/go-homedir"
 	"path"
 	"io/ioutil"
+	"github.com/gwuhaolin/lightsocks/core"
+	"github.com/mitchellh/go-homedir"
 )
 
 type Config struct {

@@ -2,11 +2,11 @@ package main
 
 import (
 	"log"
+	"net"
+	"fmt"
 	"github.com/gwuhaolin/lightsocks/local"
 	"github.com/gwuhaolin/lightsocks/cmd"
 	"github.com/gwuhaolin/lightsocks/core"
-	"net"
-	"fmt"
 )
 
 var version = "master"

@@ -11,7 +11,8 @@ const (
 )
 
 func TestRandPassword(t *testing.T) {
-	t.Log(RandPassword())
+	password := RandPassword()
+	t.Log(password)
 }
 
 func TestNewCipher(t *testing.T) {
@@ -30,7 +31,7 @@ func TestNewCipher(t *testing.T) {
 	cipher.decode(tmp)
 	t.Log(tmp)
 	if !reflect.DeepEqual(org, tmp) {
-		t.Error("encode decode error")
+		t.Error("解码编码数据后无法还原数据，数据不对应")
 	}
 }
 

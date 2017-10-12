@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 	"net"
+	"fmt"
 	"github.com/gwuhaolin/lightsocks/server"
 	"github.com/gwuhaolin/lightsocks/cmd"
 	"github.com/gwuhaolin/lightsocks/core"
-	"fmt"
 )
 
 var version = "master"

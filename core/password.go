@@ -10,7 +10,7 @@ import (
 
 const PasswordLength = 256
 
-var ErrInvalidPassword = errors.New("invlid password")
+var ErrInvalidPassword = errors.New("不合法的密码")
 
 type Password [PasswordLength]byte
 
@@ -18,12 +18,12 @@ func init() {
 	rand.Seed(time.Now().Unix())
 }
 
-//采用base64编码把密码转换为字符串
+// 采用base64编码把密码转换为字符串
 func (password *Password) String() string {
 	return base64.StdEncoding.EncodeToString(password[:])
 }
 
-//解析采用base64编码的字符串获取密码
+// 解析采用base64编码的字符串获取密码
 func ParsePassword(passwordString string) (*Password, error) {
 	bs, err := base64.StdEncoding.DecodeString(strings.TrimSpace(passwordString))
 	if err != nil || len(bs) != PasswordLength {
@@ -35,8 +35,8 @@ func ParsePassword(passwordString string) (*Password, error) {
 	return &password, nil
 }
 
-//产生 256个byte随机组合的 密码，最后使用base64编码为字符串
-//不会出现如何一个byte位出现重复
+// 产生 256个byte随机组合的 密码，最后会使用base64编码为字符串存储在配置文件中
+// 不会出现如何一个byte位出现重复
 func RandPassword() *Password {
 	intArr := rand.Perm(PasswordLength)
 	password := &Password{}
@@ -47,7 +47,7 @@ func RandPassword() *Password {
 			sameCount++
 		}
 	}
-	//不会出现如何一个byte位出现重复
+	// 不会出现如何一个byte位出现重复
 	if sameCount > 0 {
 		password = nil
 		return RandPassword()

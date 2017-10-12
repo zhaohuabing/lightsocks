@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	PACK_SIZE        = 1024 * 1024 * 2 //2Mb
-	ECHO_SERVER_ADDR = "127.0.0.1:3453"
-	SOCKS_PROXY_ADDR = "127.0.0.1:8010"
+	PackSize       = 1024 * 1024 * 2 // 2Mb
+	EchoServerAddr = "127.0.0.1:3453"
+	SocksProxyAddr = "127.0.0.1:8010"
 )
 
 var (
@@ -22,17 +22,17 @@ var (
 
 func init() {
 	go runEchoServer()
-	//初始化代理socksDialer
+	// 初始化代理socksDialer
 	var err error
-	socksDialer, err = proxy.SOCKS5("tcp", SOCKS_PROXY_ADDR, nil, proxy.Direct)
+	socksDialer, err = proxy.SOCKS5("tcp", SocksProxyAddr, nil, proxy.Direct)
 	if err != nil {
 		log.Fatalln(err)
 	}
 }
 
-//启动echo server
+// 启动echo server
 func runEchoServer() {
-	listener, err := net.Listen("tcp", ECHO_SERVER_ADDR)
+	listener, err := net.Listen("tcp", EchoServerAddr)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -52,16 +52,16 @@ func runEchoServer() {
 	}
 }
 
-//获取 发送 data 到 echo server 并且收到全部返回 所花费到时间
+// 获取 发送 data 到 echo server 并且收到全部返回 所花费到时间
 func BenchmarkAll(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		//随机生产 PACK_SIZE byte的[]byte
-		data := make([]byte, PACK_SIZE)
+		//随机生产 PackSize byte的[]byte
+		data := make([]byte, PackSize)
 		_, err := rand.Read(data)
 		buf := make([]byte, len(data))
 		b.StartTimer()
-		conn, err := socksDialer.Dial("tcp", ECHO_SERVER_ADDR)
+		conn, err := socksDialer.Dial("tcp", EchoServerAddr)
 		if err != nil {
 			log.Fatalln(err)
 		}

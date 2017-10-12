@@ -13,11 +13,11 @@ type LsServer struct {
 	AfterListen func(listenAddr net.Addr)
 }
 
-//新建一个服务端
-//服务端的职责是:
-//0.监听来自本地端请求
-//1.解密本地端请求的数据，解析socks5协议，连接用户浏览器真正想要连接的远程服务器
-//2.加密后转发用户浏览器真正想要连接的远程服务器返回的数据到本地端
+// 新建一个服务端
+// 服务端的职责是:
+// 0.监听来自本地端请求
+// 1.解密本地端请求的数据，解析socks5协议，连接用户浏览器真正想要连接的远程服务器
+// 2.加密后转发用户浏览器真正想要连接的远程服务器返回的数据到本地端
 func New(encodePassword *core.Password, localAddr *net.TCPAddr) *LsServer {
 	return &LsServer{
 		SecureSocket: &core.SecureSocket{
@@ -27,7 +27,7 @@ func New(encodePassword *core.Password, localAddr *net.TCPAddr) *LsServer {
 	}
 }
 
-//运行服务端并且监听来自本地端的请求
+// 运行服务端并且监听来自本地端的请求
 func (server *LsServer) Listen() error {
 	listener, err := net.ListenTCP("tcp", server.LocalAddr)
 	if err != nil {
@@ -53,9 +53,9 @@ func (server *LsServer) Listen() error {
 	return nil
 }
 
-//停止运行当前服务端并且释放对应资源
+// 停止运行当前服务端并且释放对应资源
 func (server *LsServer) Close() {
-	//TODO 释放所有资源
+	// TODO 释放所有资源
 	server.running = false
 	server.SecureSocket = nil
 }
@@ -160,7 +160,7 @@ func (server *LsServer) handleConn(localConn *net.TCPConn) {
 		dstServer.SetLinger(0)
 		dstServer.SetDeadline(time.Now().Add(core.TIMEOUT))
 	}
-	//进行转发
+	// 进行转发
 	go server.DecodeCopy(dstServer, localConn)
 	server.EncodeCopy(localConn, dstServer)
 }
