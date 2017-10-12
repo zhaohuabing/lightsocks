@@ -2,7 +2,10 @@
 
 # Lightsocks
 一个轻量级网络混淆代理，基于 SOCKS5 协议，可用来代替 Shadowsocks。
-采用更高效的算法，专注于翻墙，更快，占用资源更少，纯 Golang 编写跨平台。
+
+- 只专注于成为一个梯子，用最简单高效的混淆算法达到目的；
+- 不会放大传输流量，传输流量更少更快，占用资源更少；
+- 纯 Golang 编写，跨平台。
 
 ## 安装
 去 [releases](https://github.com/gwuhaolin/lightsocks/releases) 页下载最新的可执行文件，注意选择正确的操作系统和位数。
@@ -47,7 +50,7 @@
   "password": "******"
 }
 ```
-重新启动 lightsocks-local 后，再使用监听在 `127.0.0.1:7448` 的本地 SOCK5 服务就可以翻墙成功了。
+重新启动 lightsocks-local 后，再使用监听在 `127.0.0.1:7448` 的本地 SOCK5 服务就可以正常使用了。
  
 ## 配置
 #### lightsocks-local 支持的选项：
@@ -60,7 +63,7 @@
 - **listen**：本地 SOCKS5 代理客户端的监听地址，格式为 `ip:port`，默认为 `0.0.0.0:7448`。
 
 #### 注意：
-- lightsocks-local 和 lightsocks-server 的 password 必须一致才能正常翻墙，password 不要泄露。
+- lightsocks-local 和 lightsocks-server 的 password 必须一致才能正常正常使用，password 不要泄露。
 - password 会自动生成，不要自己生成。一般采用拷贝 lightsocks-server 生成的密码到 lightsocks-local 使用的本地配置文件中。
 
 
