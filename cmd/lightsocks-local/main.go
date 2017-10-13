@@ -16,6 +16,8 @@ const (
 var version = "master"
 
 func main() {
+	log.SetFlags(log.Lshortfile)
+
 	var err error
 	config := &cmd.Config{
 		ListenAddr: DefaultListenAddr,

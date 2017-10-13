@@ -13,6 +13,8 @@ import (
 var version = "master"
 
 func main() {
+	log.SetFlags(log.Lshortfile)
+
 	var err error
 
 	// 服务端监听端口随机生成
