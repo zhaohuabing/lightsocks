@@ -4,10 +4,10 @@ import (
 	"log"
 	"net"
 	"fmt"
-	"github.com/gwuhaolin/lightsocks/server"
-	"github.com/gwuhaolin/lightsocks/cmd"
-	"github.com/gwuhaolin/lightsocks/core"
 	"github.com/phayes/freeport"
+	"../../server"
+	"../../cmd"
+	"../../core"
 )
 
 var version = "master"

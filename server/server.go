@@ -4,7 +4,7 @@ import (
 	"net"
 	"encoding/binary"
 	"time"
-	"github.com/gwuhaolin/lightsocks/core"
+	"../core"
 )
 
 type LsServer struct {

@@ -4,9 +4,9 @@ import (
 	"log"
 	"net"
 	"fmt"
-	"github.com/gwuhaolin/lightsocks/local"
-	"github.com/gwuhaolin/lightsocks/cmd"
-	"github.com/gwuhaolin/lightsocks/core"
+	"../../local"
+	"../../cmd"
+	"../../core"
 )
 
 const (

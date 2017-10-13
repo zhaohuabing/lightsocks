@@ -8,9 +8,9 @@ import (
 	"math/rand"
 	"testing"
 	"reflect"
-	"github.com/gwuhaolin/lightsocks/core"
-	"github.com/gwuhaolin/lightsocks/server"
-	"github.com/gwuhaolin/lightsocks/local"
+	"../core"
+	"../server"
+	"../local"
 )
 
 const (
