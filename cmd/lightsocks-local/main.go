@@ -9,11 +9,20 @@ import (
 	"github.com/gwuhaolin/lightsocks/core"
 )
 
+const (
+	DefaultListenAddr = ":7448"
+)
+
 var version = "master"
 
 func main() {
 	var err error
-	config := cmd.ReadConfig()
+	config := &cmd.Config{
+		ListenAddr: DefaultListenAddr,
+	}
+	config.ReadConfig()
+	config.SaveConfig()
+
 	password, err := core.ParsePassword(config.Password)
 	if err != nil {
 		log.Fatalln(err)
@@ -26,7 +35,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	
+
 	// 启动 local 端并监听
 	lsLocal := local.New(password, listenAddr, remoteAddr)
 	lsLocal.AfterListen = func(listenAddr net.Addr) {

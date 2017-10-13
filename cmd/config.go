@@ -7,13 +7,11 @@ import (
 	"log"
 	"path"
 	"io/ioutil"
-	"github.com/gwuhaolin/lightsocks/core"
 	"github.com/mitchellh/go-homedir"
 )
 
 const (
 	ConfigFileName    = ".lightsocks.json"
-	DefaultListenAddr = ":7448"
 )
 
 type Config struct {
@@ -40,28 +38,19 @@ func (config *Config) SaveConfig() {
 	log.Printf("保存配置到文件 %s 成功\n", configPath)
 }
 
-func ReadConfig() *Config {
-	config := &Config{
-		ListenAddr: DefaultListenAddr,
-		RemoteAddr: DefaultListenAddr,
-		Password:   core.RandPassword().String(),
-	}
-
-	// 如果配置文件存在，就采用配置文件中的配置
+func (config *Config) ReadConfig() {
+	// 如果配置文件存在，就读取配置文件中的配置 assign 到 config
 	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
 		log.Printf("从文件 %s 中读取配置\n", configPath)
 		file, err := os.Open(configPath)
 		if err != nil {
-			log.Fatalf("打开文件 %s 出错:%s", configPath, err)
+			log.Fatalf("打开配置文件 %s 出错:%s", configPath, err)
 		}
 		defer file.Close()
 
-		// parse & set Cipher
 		err = json.NewDecoder(file).Decode(config)
 		if err != nil {
 			log.Fatalf("格式不合法的 JSON 配置文件:\n%s", file)
 		}
 	}
-	config.SaveConfig()
-	return config
 }

@@ -7,13 +7,28 @@ import (
 	"github.com/gwuhaolin/lightsocks/server"
 	"github.com/gwuhaolin/lightsocks/cmd"
 	"github.com/gwuhaolin/lightsocks/core"
+	"github.com/phayes/freeport"
 )
 
 var version = "master"
 
 func main() {
 	var err error
-	config := cmd.ReadConfig()
+
+	// 服务端监听端口随机生成
+	port, err := freeport.GetFreePort()
+	if err != nil {
+		// 随机端口失败就采用 7448
+		port = 7448
+	}
+	config := &cmd.Config{
+		ListenAddr: fmt.Sprintf(":%d", port),
+		// 密码随机生成
+		Password: core.RandPassword().String(),
+	}
+	config.ReadConfig()
+	config.SaveConfig()
+
 	password, err := core.ParsePassword(config.Password)
 	if err != nil {
 		log.Fatalln(err)
