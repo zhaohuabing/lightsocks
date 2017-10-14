@@ -8,13 +8,14 @@ import (
 	"math/rand"
 	"testing"
 	"reflect"
+	"sync"
 	"github.com/gwuhaolin/lightsocks/core"
 	"github.com/gwuhaolin/lightsocks/server"
 	"github.com/gwuhaolin/lightsocks/local"
 )
 
 const (
-	MaxPackSize               = 1024 * 1024 * 2 // 2Mb
+	MaxPackSize               = 1024 * 1024 * 5 // 5Mb
 	EchoServerAddr            = "127.0.0.1:3453"
 	LightSocksProxyLocalAddr  = "127.0.0.1:7441"
 	LightSocksProxyServerAddr = "127.0.0.1:7442"
@@ -49,8 +50,12 @@ func runEchoServer() {
 			log.Fatalln(err)
 			continue
 		}
+		log.Println("echoServer connect Accept")
 		go func() {
-			defer conn.Close()
+			defer func() {
+				conn.Close()
+				log.Println("echoServer connect Close")
+			}()
 			io.Copy(conn, conn)
 		}()
 	}
@@ -98,16 +103,28 @@ func testConnect(packSize int) {
 	}
 }
 
-// 获取 发送 data 到 echo server 并且收到全部返回 所花费到时间
 func TestLightsocks(t *testing.T) {
 	testConnect(rand.Intn(MaxPackSize))
+}
+
+// 获取并发发送 data 到 echo server 并且收到全部返回 所花费到时间
+func benchmarkLightsocks(concurrenceCount int) {
+	wg := sync.WaitGroup{}
+	wg.Add(concurrenceCount)
+	for i := 0; i < concurrenceCount; i++ {
+		go func() {
+			testConnect(rand.Intn(MaxPackSize))
+			wg.Done()
+		}()
+	}
+	wg.Wait()
 }
 
 // 获取 发送 data 到 echo server 并且收到全部返回 所花费到时间
 func BenchmarkLightsocks(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
-		testConnect(rand.Intn(MaxPackSize))
+		benchmarkLightsocks(50)
 		b.StopTimer()
 	}
 }

@@ -45,24 +45,21 @@ func (secureSocket *SecureSocket) EncodeCopy(dst *net.TCPConn, src *net.TCPConn)
 	buf := make([]byte, BufSize)
 	for {
 		src.SetReadDeadline(time.Now().Add(TIMEOUT))
-		nr, er := src.Read(buf)
-		if er != nil {
-			return er
-		}
-		if nr > 0 {
-			nw, ew := secureSocket.EncodeWrite(dst, buf[0:nr])
-			if ew != nil {
-				return ew
-			}
-			if nr != nw {
-				return io.ErrShortWrite
-			}
-		}
-		if er != nil {
-			if er != io.EOF {
-				return er
+		readCount, errRead := src.Read(buf)
+		if errRead != nil {
+			if errRead != io.EOF {
+				return errRead
 			} else {
 				return nil
+			}
+		}
+		if readCount > 0 {
+			writeCount, errWrite := secureSocket.EncodeWrite(dst, buf[0:readCount])
+			if errWrite != nil {
+				return errWrite
+			}
+			if readCount != writeCount {
+				return io.ErrShortWrite
 			}
 		}
 	}
@@ -72,25 +69,22 @@ func (secureSocket *SecureSocket) EncodeCopy(dst *net.TCPConn, src *net.TCPConn)
 func (secureSocket *SecureSocket) DecodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
 	buf := make([]byte, BufSize)
 	for {
-		nr, er := secureSocket.DecodeRead(src, buf)
-		if er != nil {
-			return er
-		}
-		if nr > 0 {
-			dst.SetWriteDeadline(time.Now().Add(TIMEOUT))
-			nw, ew := dst.Write(buf[0:nr])
-			if ew != nil {
-				return ew
-			}
-			if nr != nw {
-				return io.ErrShortWrite
-			}
-		}
-		if er != nil {
-			if er != io.EOF {
-				return er
+		readCount, errRead := secureSocket.DecodeRead(src, buf)
+		if errRead != nil {
+			if errRead != io.EOF {
+				return errRead
 			} else {
 				return nil
+			}
+		}
+		if readCount > 0 {
+			dst.SetWriteDeadline(time.Now().Add(TIMEOUT))
+			writeCount, errWrite := dst.Write(buf[0:readCount])
+			if errWrite != nil {
+				return errWrite
+			}
+			if readCount != writeCount {
+				return io.ErrShortWrite
 			}
 		}
 	}
