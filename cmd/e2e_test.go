@@ -17,8 +17,8 @@ import (
 const (
 	MaxPackSize               = 1024 * 1024 * 5 // 5Mb
 	EchoServerAddr            = "127.0.0.1:3453"
-	LightSocksProxyLocalAddr  = "127.0.0.1:7441"
-	LightSocksProxyServerAddr = "127.0.0.1:7442"
+	LightSocksProxyLocalAddr  = "127.0.0.1:8448"
+	LightSocksProxyServerAddr = "127.0.0.1:9449"
 )
 
 var (
@@ -67,8 +67,10 @@ func runLightsocksProxyServer() {
 	serverAddr, _ := net.ResolveTCPAddr("tcp", LightSocksProxyServerAddr)
 	serverS := local.New(password, localAddr, serverAddr)
 	localS := server.New(password, serverAddr)
-	go serverS.Listen(nil)
-	localS.Listen(nil)
+	go func() {
+		log.Fatalln(serverS.Listen(nil))
+	}()
+	log.Fatalln(localS.Listen(nil))
 }
 
 // 发生一次连接测试经过代理后的数据传输的正确性
