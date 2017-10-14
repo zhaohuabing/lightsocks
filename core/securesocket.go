@@ -44,7 +44,11 @@ func (secureSocket *SecureSocket) EncodeWrite(conn *net.TCPConn, bs []byte) (int
 func (secureSocket *SecureSocket) EncodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
 	buf := make([]byte, BufSize)
 	for {
+		src.SetReadDeadline(time.Now().Add(TIMEOUT))
 		nr, er := src.Read(buf)
+		if er != nil {
+			return er
+		}
 		if nr > 0 {
 			nw, ew := secureSocket.EncodeWrite(dst, buf[0:nr])
 			if ew != nil {
@@ -69,7 +73,11 @@ func (secureSocket *SecureSocket) DecodeCopy(dst *net.TCPConn, src *net.TCPConn)
 	buf := make([]byte, BufSize)
 	for {
 		nr, er := secureSocket.DecodeRead(src, buf)
+		if er != nil {
+			return er
+		}
 		if nr > 0 {
+			dst.SetWriteDeadline(time.Now().Add(TIMEOUT))
 			nw, ew := dst.Write(buf[0:nr])
 			if ew != nil {
 				return ew

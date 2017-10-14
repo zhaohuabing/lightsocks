@@ -25,6 +25,7 @@ var (
 )
 
 func init() {
+	log.SetFlags(log.Lshortfile)
 	go runEchoServer()
 	go runLightsocksProxyServer()
 	// 初始化代理socksDialer
@@ -95,6 +96,11 @@ func testConnect(packSize int) {
 	} else {
 		log.Println("数据一致性验证通过")
 	}
+}
+
+// 获取 发送 data 到 echo server 并且收到全部返回 所花费到时间
+func TestLightsocks(t *testing.T) {
+	testConnect(rand.Intn(MaxPackSize))
 }
 
 // 获取 发送 data 到 echo server 并且收到全部返回 所花费到时间

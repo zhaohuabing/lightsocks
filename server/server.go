@@ -154,10 +154,19 @@ func (lsServer *LsServer) handleConn(localConn *net.TCPConn) {
         	+----+-----+-------+------+----------+----------+
 	 	*/
 		// 响应客户端连接成功
-		go lsServer.EncodeWrite(localConn, []byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})
+		lsServer.EncodeWrite(localConn, []byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})
 	}
 
 	// 进行转发
-	go lsServer.DecodeCopy(dstServer, localConn)
+	// 从 localUser 读取数据发送到 dstServer
+	go func() {
+		err := lsServer.DecodeCopy(dstServer, localConn)
+		if err != nil {
+			// 在 copy 的过程中可能会存在网络超时等 error 被 return，只要有一个发生了错误就退出本次工作
+			localConn.Close()
+			dstServer.Close()
+		}
+	}()
+	// 从 dstServer 读取数据发送到 localUser，这里因为处在翻墙阶段出现网络错误的概率更大
 	lsServer.EncodeCopy(localConn, dstServer)
 }

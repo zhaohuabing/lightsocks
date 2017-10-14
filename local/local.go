@@ -65,6 +65,15 @@ func (local *LsLocal) handleConn(userConn *net.TCPConn) {
 	proxyServer.SetLinger(0)
 
 	// 进行转发
-	go local.EncodeCopy(proxyServer, userConn)
-	local.DecodeCopy(userConn, proxyServer)
+	// 从 proxyServer 读取数据发送到 localUser
+	go func() {
+		err := local.DecodeCopy(userConn, proxyServer)
+		if err != nil {
+			// 在 copy 的过程中可能会存在网络超时等 error 被 return，只要有一个发生了错误就退出本次工作
+			userConn.Close()
+			proxyServer.Close()
+		}
+	}()
+	// 从 localUser 发送数据发送到 proxyServer，这里因为处在翻墙阶段出现网络错误的概率更大
+	local.EncodeCopy(proxyServer, userConn)
 }
