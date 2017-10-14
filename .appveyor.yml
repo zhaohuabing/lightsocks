@@ -3,3 +3,5 @@ platform:
   - x64
 
 test_script: go test -bench=. -run=. ./...
+
+build: off
