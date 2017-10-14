@@ -43,12 +43,12 @@ func main() {
 	// 启动 server 端并监听
 	lsServer := server.New(password, listenAddr)
 	log.Fatalln(lsServer.Listen(func(listenAddr net.Addr) {
-		log.Printf("lightsocks-server:%s 启动成功 监听在 %s\n", version, listenAddr.String())
 		log.Println("使用配置：", fmt.Sprintf(`
 本地监听地址 listen：
 %s
 密码 password：
 %s
 	`, listenAddr, password))
+		log.Printf("lightsocks-server:%s 启动成功 监听在 %s\n", version, listenAddr.String())
 	}))
 }

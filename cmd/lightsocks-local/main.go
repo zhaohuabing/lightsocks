@@ -42,7 +42,6 @@ func main() {
 	// 启动 local 端并监听
 	lsLocal := local.New(password, listenAddr, remoteAddr)
 	log.Fatalln(lsLocal.Listen(func(listenAddr net.Addr) {
-		log.Printf("lightsocks-local:%s 启动成功 监听在 %s\n", version, listenAddr.String())
 		log.Println("使用配置：", fmt.Sprintf(`
 本地监听地址 listen：
 %s
@@ -51,5 +50,6 @@ func main() {
 密码 password：
 %s
 	`, listenAddr, remoteAddr, password))
+		log.Printf("lightsocks-local:%s 启动成功 监听在 %s\n", version, listenAddr.String())
 	}))
 }
