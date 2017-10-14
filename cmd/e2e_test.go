@@ -12,13 +12,14 @@ import (
 	"github.com/gwuhaolin/lightsocks/core"
 	"github.com/gwuhaolin/lightsocks/server"
 	"github.com/gwuhaolin/lightsocks/local"
+	"time"
 )
 
 const (
 	MaxPackSize               = 1024 * 1024 * 5 // 5Mb
 	EchoServerAddr            = "127.0.0.1:3453"
 	LightSocksProxyLocalAddr  = "127.0.0.1:8448"
-	LightSocksProxyServerAddr = "127.0.0.1:9449"
+	LightSocksProxyServerAddr = "127.0.0.1:8449"
 )
 
 var (
@@ -31,6 +32,8 @@ func init() {
 	go runLightsocksProxyServer()
 	// 初始化代理socksDialer
 	var err error
+	// 等它们启动好
+	time.Sleep(time.Second)
 	lightsocksDialer, err = proxy.SOCKS5("tcp", LightSocksProxyLocalAddr, nil, proxy.Direct)
 	if err != nil {
 		log.Fatalln(err)
@@ -68,9 +71,13 @@ func runLightsocksProxyServer() {
 	serverS := local.New(password, localAddr, serverAddr)
 	localS := server.New(password, serverAddr)
 	go func() {
-		log.Fatalln(serverS.Listen(nil))
+		log.Fatalln(serverS.Listen(func(listenAddr net.Addr) {
+			log.Println(listenAddr)
+		}))
 	}()
-	log.Fatalln(localS.Listen(nil))
+	log.Fatalln(localS.Listen(func(listenAddr net.Addr) {
+		log.Println(listenAddr)
+	}))
 }
 
 // 发生一次连接测试经过代理后的数据传输的正确性
