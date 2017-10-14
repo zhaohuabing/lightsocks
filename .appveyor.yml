@@ -1,7 +1,9 @@
+build: off
+
 platform:
   - x86
   - x64
 
-test_script: go test -bench=. -run=. ./...
+install: go get ./...
 
-build: off
+test_script: go test -bench=. -run=. ./...

@@ -133,7 +133,7 @@ func benchmarkLightsocks(concurrenceCount int) {
 func BenchmarkLightsocks(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
-		benchmarkLightsocks(50)
+		benchmarkLightsocks(10)
 		b.StopTimer()
 	}
 }
