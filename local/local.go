@@ -3,13 +3,11 @@ package local
 import (
 	"net"
 	"log"
-	"time"
 	"github.com/gwuhaolin/lightsocks/core"
 )
 
 type LsLocal struct {
 	*core.SecureSocket
-	AfterListen func(listenAddr net.Addr)
 }
 
 // 新建一个本地端
@@ -29,7 +27,7 @@ func New(password *core.Password, listenAddr, remoteAddr *net.TCPAddr) *LsLocal 
 }
 
 // 本地端启动监听给用户的浏览器调用
-func (local *LsLocal) Listen() error {
+func (local *LsLocal) Listen(didListen func(listenAddr net.Addr)) error {
 	listener, err := net.ListenTCP("tcp", local.ListenAddr)
 	if err != nil {
 		return err
@@ -37,13 +35,14 @@ func (local *LsLocal) Listen() error {
 
 	defer listener.Close()
 
-	if local.AfterListen != nil {
-		local.AfterListen(listener.Addr())
+	if didListen != nil {
+		didListen(listener.Addr())
 	}
 
 	for {
 		userConn, err := listener.AcceptTCP()
 		if err != nil {
+			log.Println(err)
 			continue
 		}
 		// userConn被关闭时直接清除所有数据 不管没有发送的数据
@@ -55,15 +54,17 @@ func (local *LsLocal) Listen() error {
 
 func (local *LsLocal) handleConn(userConn *net.TCPConn) {
 	defer userConn.Close()
-	server, err := local.DialServer()
+
+	proxyServer, err := local.DialRemote()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	defer server.Close()
-	server.SetLinger(0)
-	server.SetDeadline(time.Now().Add(core.TIMEOUT))
+	defer proxyServer.Close()
+	// Conn被关闭时直接清除所有数据 不管没有发送的数据
+	proxyServer.SetLinger(0)
+
 	// 进行转发
-	go local.EncodeCopy(server, userConn)
-	local.DecodeCopy(userConn, server)
+	go local.EncodeCopy(proxyServer, userConn)
+	local.DecodeCopy(userConn, proxyServer)
 }

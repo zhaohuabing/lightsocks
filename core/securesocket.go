@@ -22,6 +22,8 @@ type SecureSocket struct {
 
 // 从输入流里读取加密过的数据，解密后把原数据放到bs里
 func (secureSocket *SecureSocket) DecodeRead(conn *net.TCPConn, bs []byte) (n int, err error) {
+	// 设置读超时
+	conn.SetReadDeadline(time.Now().Add(TIMEOUT))
 	n, err = conn.Read(bs)
 	if err != nil {
 		return
@@ -33,6 +35,8 @@ func (secureSocket *SecureSocket) DecodeRead(conn *net.TCPConn, bs []byte) (n in
 // 把放在bs里的数据加密后立即全部写入输出流
 func (secureSocket *SecureSocket) EncodeWrite(conn *net.TCPConn, bs []byte) (int, error) {
 	secureSocket.Cipher.encode(bs)
+	// 设置写超时
+	conn.SetWriteDeadline(time.Now().Add(TIMEOUT))
 	return conn.Write(bs)
 }
 
@@ -84,8 +88,8 @@ func (secureSocket *SecureSocket) DecodeCopy(dst *net.TCPConn, src *net.TCPConn)
 	}
 }
 
-// 和远程的socket建立连接，他们直接的数据传输会加密
-func (secureSocket *SecureSocket) DialServer() (*net.TCPConn, error) {
+// 和远程的socket建立连接，他们之间的数据传输会加密
+func (secureSocket *SecureSocket) DialRemote() (*net.TCPConn, error) {
 	remoteConn, err := net.DialTCP("tcp", nil, secureSocket.RemoteAddr)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("连接到远程服务器 %s 失败:%s", secureSocket.RemoteAddr, err))

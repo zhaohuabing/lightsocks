@@ -15,14 +15,13 @@ var version = "master"
 func main() {
 	log.SetFlags(log.Lshortfile)
 
-	var err error
-
 	// 服务端监听端口随机生成
 	port, err := freeport.GetFreePort()
 	if err != nil {
 		// 随机端口失败就采用 7448
 		port = 7448
 	}
+	// 默认配置
 	config := &cmd.Config{
 		ListenAddr: fmt.Sprintf(":%d", port),
 		// 密码随机生成
@@ -31,6 +30,7 @@ func main() {
 	config.ReadConfig()
 	config.SaveConfig()
 
+	// 解析配置
 	password, err := core.ParsePassword(config.Password)
 	if err != nil {
 		log.Fatalln(err)
@@ -42,7 +42,7 @@ func main() {
 
 	// 启动 server 端并监听
 	lsServer := server.New(password, listenAddr)
-	lsServer.AfterListen = func(listenAddr net.Addr) {
+	log.Fatalln(lsServer.Listen(func(listenAddr net.Addr) {
 		log.Printf("lightsocks-server:%s 启动成功 监听在 %s\n", version, listenAddr.String())
 		log.Println("使用配置：", fmt.Sprintf(`
 本地监听地址 listen：
@@ -50,6 +50,5 @@ func main() {
 密码 password：
 %s
 	`, listenAddr, password))
-	}
-	log.Fatalln(lsServer.Listen())
+	}))
 }

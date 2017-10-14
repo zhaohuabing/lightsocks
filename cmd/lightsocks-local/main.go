@@ -18,13 +18,14 @@ var version = "master"
 func main() {
 	log.SetFlags(log.Lshortfile)
 
-	var err error
+	// 默认配置
 	config := &cmd.Config{
 		ListenAddr: DefaultListenAddr,
 	}
 	config.ReadConfig()
 	config.SaveConfig()
 
+	// 解析配置
 	password, err := core.ParsePassword(config.Password)
 	if err != nil {
 		log.Fatalln(err)
@@ -40,7 +41,7 @@ func main() {
 
 	// 启动 local 端并监听
 	lsLocal := local.New(password, listenAddr, remoteAddr)
-	lsLocal.AfterListen = func(listenAddr net.Addr) {
+	log.Fatalln(lsLocal.Listen(func(listenAddr net.Addr) {
 		log.Printf("lightsocks-local:%s 启动成功 监听在 %s\n", version, listenAddr.String())
 		log.Println("使用配置：", fmt.Sprintf(`
 本地监听地址 listen：
@@ -50,6 +51,5 @@ func main() {
 密码 password：
 %s
 	`, listenAddr, remoteAddr, password))
-	}
-	log.Fatalln(lsLocal.Listen())
+	}))
 }

@@ -45,14 +45,12 @@ func runEchoServer() {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Fatalln("listener.Accept", err)
+			log.Fatalln(err)
 			continue
 		}
-		log.Println("EchoServer", "listener.Accept")
 		go func() {
 			defer conn.Close()
 			io.Copy(conn, conn)
-			log.Println("EchoServer", "conn.Close")
 		}()
 	}
 }
@@ -63,8 +61,8 @@ func runLightsocksProxyServer() {
 	serverAddr, _ := net.ResolveTCPAddr("tcp", LightSocksProxyServerAddr)
 	serverS := local.New(password, localAddr, serverAddr)
 	localS := server.New(password, serverAddr)
-	go serverS.Listen()
-	localS.Listen()
+	go serverS.Listen(nil)
+	localS.Listen(nil)
 }
 
 // 发生一次连接测试经过代理后的数据传输的正确性
@@ -73,21 +71,29 @@ func testConnect(packSize int) {
 	// 随机生产 MaxPackSize byte的[]byte
 	data := make([]byte, packSize)
 	_, err := rand.Read(data)
-	buf := make([]byte, len(data))
+
+	// 连接
 	conn, err := lightsocksDialer.Dial("tcp", EchoServerAddr)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	defer conn.Close()
+
+	// 写
 	go func() {
 		conn.Write(data)
 	}()
+
+	// 读
+	buf := make([]byte, len(data))
 	_, err = io.ReadFull(conn, buf)
-	conn.Close()
 	if err != nil {
-		log.Fatalln("io.ReadFull", err)
+		log.Fatalln(err)
 	}
 	if !reflect.DeepEqual(data, buf) {
 		log.Fatalln("通过 Lightsocks 代理传输得到的数据前后不一致")
+	} else {
+		log.Println("数据一致性验证通过")
 	}
 }
 
