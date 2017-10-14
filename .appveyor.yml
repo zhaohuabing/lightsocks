@@ -4,6 +4,11 @@ platform:
   - x86
   - x64
 
+clone_folder: c:\gopath\src\github.com\gwuhaolin\lightsocks
+
+environment:
+  GOPATH: c:\gopath
+
 install: go get ./...
 
 test_script: go test -bench=. -run=. ./...
