@@ -17,7 +17,7 @@ server 端与 client 端切换可以通过更改 `LIGHT_MODULE` 环境变量值�
 
 #### 2.1、服务端
 
-**由于 lightsocks 的配置文件是自动生成的，所以我们需要先让服务端帮我们生成一个配置文件，出现密码提示后 Ctrl+c 停止即可**
+**由于 lightsocks 的配置文件是自动生成的，所以需要先让服务端帮我们生成一个配置文件，出现密码后 Ctrl+c 停止即可**
 
 ``` sh
 docker run --rm -it -v `pwd`:/root mritd/lightsocks:1.0.3
