@@ -1,0 +1,12 @@
+version: '2' 
+services:
+  lightsocks:
+    image: mritd/lightsocks:1.0.3
+    restart: always
+    volumes: 
+      - ./:/root
+    ports: 
+      - "1024:1024" 
+    environment:
+      - LIGHT_MODULE
+    command: $LIGHT_MODULE
