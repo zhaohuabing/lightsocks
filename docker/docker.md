@@ -49,7 +49,7 @@ docker run -d --name lsserver -v `pwd`:/root -p 43413:43413 --restart=always mri
 cat > .lightsocks.json <<EOF
 {
     "listen": ":43413",
-    "remote": "",
+    "remote": "SERVER_IP:43413",
     "password": "vfpfHaoIliU7odM036nYvLXolOn8hb53dtfFu9vtZ530le9ywWsBfHomaLmCiyhvQRsKPVWn1A9DW/OOpGWuLAyQAwvdFmQ2tvkVik+Y8SqSLQUN2TD4E3irOTOJTqBU3OrOISRRAvVN/WBWI9F+FMKcccNjIoQY7kddEfCPppNSysdIrH9tPkJckXk4EFBz3uZEuBqjgSscRln+bEW6PzxqWIduSa2yIA7AMajnl17ymvd7Euxm0st0cLcvJy4fiDfPUwfkg7SGBtCMacml69oy4p/jm6/ESwDWgKJXfb9iNUDN5QTM4cbVGY11SrEJ+7Ow9h6eYVqZF0wp4P/IOg=="
 }
 EOF
