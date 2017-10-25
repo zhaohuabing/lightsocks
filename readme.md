@@ -15,7 +15,7 @@
 - **lightsocks-local**：用于运行在本地电脑的客户端，用于桥接本地浏览器和远程代理服务，传输前会混淆数据；
 - **lightsocks-server**：用于运行在代理服务器的客户端，会还原混淆数据；
 
-除此之外你还可以通过 [Docker 安装](docker/readme.md)
+除此之外你还可以[通过 Docker 安装](docker/readme.md)。
 
 ## 启动
 #### 启动 lightsocks-server
