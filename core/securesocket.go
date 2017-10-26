@@ -5,12 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"time"
 )
 
 const (
 	BufSize = 1024
-	TIMEOUT = 10 * time.Second
 )
 
 // 加密传输的 TCP Socket
@@ -22,8 +20,6 @@ type SecureSocket struct {
 
 // 从输入流里读取加密过的数据，解密后把原数据放到bs里
 func (secureSocket *SecureSocket) DecodeRead(conn *net.TCPConn, bs []byte) (n int, err error) {
-	// 设置读超时
-	conn.SetReadDeadline(time.Now().Add(TIMEOUT))
 	n, err = conn.Read(bs)
 	if err != nil {
 		return
@@ -35,8 +31,6 @@ func (secureSocket *SecureSocket) DecodeRead(conn *net.TCPConn, bs []byte) (n in
 // 把放在bs里的数据加密后立即全部写入输出流
 func (secureSocket *SecureSocket) EncodeWrite(conn *net.TCPConn, bs []byte) (int, error) {
 	secureSocket.Cipher.encode(bs)
-	// 设置写超时
-	conn.SetWriteDeadline(time.Now().Add(TIMEOUT))
 	return conn.Write(bs)
 }
 
@@ -44,7 +38,6 @@ func (secureSocket *SecureSocket) EncodeWrite(conn *net.TCPConn, bs []byte) (int
 func (secureSocket *SecureSocket) EncodeCopy(dst *net.TCPConn, src *net.TCPConn) error {
 	buf := make([]byte, BufSize)
 	for {
-		src.SetReadDeadline(time.Now().Add(TIMEOUT))
 		readCount, errRead := src.Read(buf)
 		if errRead != nil {
 			if errRead != io.EOF {
@@ -78,7 +71,6 @@ func (secureSocket *SecureSocket) DecodeCopy(dst *net.TCPConn, src *net.TCPConn)
 			}
 		}
 		if readCount > 0 {
-			dst.SetWriteDeadline(time.Now().Add(TIMEOUT))
 			writeCount, errWrite := dst.Write(buf[0:readCount])
 			if errWrite != nil {
 				return errWrite
