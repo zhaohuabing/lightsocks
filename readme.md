@@ -54,6 +54,8 @@
 }
 ```
 重新启动 lightsocks-local 后，再使用监听在 `127.0.0.1:7448` 的本地 SOCK5 服务就可以正常使用了。
+
+都启动成功后，可参考 [搭配 Chrome 使用](https://github.com/gwuhaolin/lightsocks/wiki/%E6%90%AD%E9%85%8D-Chrome-%E4%BD%BF%E7%94%A8) 配置你的 Chrome。
  
 ## 配置
 #### lightsocks-local 支持的选项：
