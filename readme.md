@@ -9,11 +9,13 @@
 - 纯 Golang 编写，跨平台。
 
 ## 安装
-去 [releases](https://github.com/gwuhaolin/lightsocks/releases) 页下载最新的可执行文件，注意选择正确的操作系统和位数。
+去 [releases](https://github.com/gwuhaolin/lightsocks/releases) 页下载最新的可执行文件，注意选择正确的操作系统和位数（Mac 系统内核为 darwin）。
 解压后会看到2个可执行文件，分别是：
 
 - **lightsocks-local**：用于运行在本地电脑的客户端，用于桥接本地浏览器和远程代理服务，传输前会混淆数据；
 - **lightsocks-server**：用于运行在代理服务器的客户端，会还原混淆数据；
+
+除此之外你还可以[通过 Docker 安装](docker/readme.md)。
 
 ## 启动
 #### 启动 lightsocks-server
@@ -52,6 +54,8 @@
 }
 ```
 重新启动 lightsocks-local 后，再使用监听在 `127.0.0.1:7448` 的本地 SOCK5 服务就可以正常使用了。
+
+都启动成功后，可参考 [搭配 Chrome 使用](https://github.com/gwuhaolin/lightsocks/wiki/%E6%90%AD%E9%85%8D-Chrome-%E4%BD%BF%E7%94%A8) 配置你的 Chrome。
  
 ## 配置
 #### lightsocks-local 支持的选项：
@@ -76,8 +80,6 @@
   "password": "******"
 }
 ```
-
-**Docker 使用相关参见 [docker.md](docker/docker.md)**
 
 
 
