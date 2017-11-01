@@ -61,7 +61,7 @@ func (lsServer *LsServer) handleConn(localConn *net.TCPConn) {
 	/**
 		The localConn connects to the dstServer, and sends a ver
 	   	identifier/method selection message:
-			   +----+----------+----------+
+	                   +----+----------+----------+
 	                   |VER | NMETHODS | METHODS  |
 	                   +----+----------+----------+
 	                   | 1  |    1     | 1 to 255 |
@@ -91,7 +91,7 @@ func (lsServer *LsServer) handleConn(localConn *net.TCPConn) {
 	lsServer.EncodeWrite(localConn, []byte{0x05, 0x00})
 
 	/**
-		+----+-----+-------+------+----------+----------+
+		    +----+-----+-------+------+----------+----------+
 	        |VER | CMD |  RSV  | ATYP | DST.ADDR | DST.PORT |
 	        +----+-----+-------+------+----------+----------+
 	        | 1  |  1  | X'00' |  1   | Variable |    2     |
@@ -104,7 +104,8 @@ func (lsServer *LsServer) handleConn(localConn *net.TCPConn) {
 	if err != nil || n < 7 {
 		return
 	}
-  // CMD代表客户端请求的类型，值长度也是1个字节，有三种类型
+
+	// CMD代表客户端请求的类型，值长度也是1个字节，有三种类型
 	// CONNECT X'01'
 	if buf[1] != 0x01 {
 		// 目前只支持 CONNECT
