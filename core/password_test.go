@@ -1,9 +1,9 @@
 package core
 
 import (
-	"testing"
-	"sort"
 	"reflect"
+	"sort"
+	"testing"
 )
 
 func (password *Password) Len() int {

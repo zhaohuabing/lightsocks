@@ -1,17 +1,17 @@
 package cmd
 
 import (
-	"net"
+	"github.com/gwuhaolin/lightsocks/core"
+	"github.com/gwuhaolin/lightsocks/local"
+	"github.com/gwuhaolin/lightsocks/server"
+	"golang.org/x/net/proxy"
 	"io"
 	"log"
-	"golang.org/x/net/proxy"
 	"math/rand"
-	"testing"
+	"net"
 	"reflect"
 	"sync"
-	"github.com/gwuhaolin/lightsocks/core"
-	"github.com/gwuhaolin/lightsocks/server"
-	"github.com/gwuhaolin/lightsocks/local"
+	"testing"
 	"time"
 )
 

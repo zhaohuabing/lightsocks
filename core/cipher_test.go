@@ -1,9 +1,9 @@
 package core
 
 import (
-	"testing"
-	"reflect"
 	"crypto/rand"
+	"reflect"
+	"testing"
 )
 
 const (

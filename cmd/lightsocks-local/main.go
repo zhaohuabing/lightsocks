@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log"
-	"net"
 	"fmt"
-	"github.com/gwuhaolin/lightsocks/local"
 	"github.com/gwuhaolin/lightsocks/cmd"
 	"github.com/gwuhaolin/lightsocks/core"
+	"github.com/gwuhaolin/lightsocks/local"
+	"log"
+	"net"
 )
 
 const (

@@ -1,9 +1,9 @@
 package local
 
 import (
-	"net"
-	"log"
 	"github.com/gwuhaolin/lightsocks/core"
+	"log"
+	"net"
 )
 
 type LsLocal struct {

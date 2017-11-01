@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log"
-	"net"
 	"fmt"
-	"github.com/gwuhaolin/lightsocks/server"
 	"github.com/gwuhaolin/lightsocks/cmd"
 	"github.com/gwuhaolin/lightsocks/core"
+	"github.com/gwuhaolin/lightsocks/server"
 	"github.com/phayes/freeport"
+	"log"
+	"net"
 )
 
 var version = "master"
