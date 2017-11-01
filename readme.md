@@ -8,6 +8,11 @@
 - 不会放大传输流量，传输流量更少更快，占用资源更少（内存占用1M左右，CPU 占用 0.1% 左右）；
 - 纯 Golang 编写，跨平台。
 
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/3bvxELAxnq8r4wheFyRkED8U/gwuhaolin/lightsocks'>
+  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/3bvxELAxnq8r4wheFyRkED8U/gwuhaolin/lightsocks.svg' />
+</a>
+
+
 ## 安装
 去 [releases](https://github.com/gwuhaolin/lightsocks/releases) 页下载最新的可执行文件，注意选择正确的操作系统和位数（Mac 系统内核为 darwin）。
 解压后会看到2个可执行文件，分别是：
