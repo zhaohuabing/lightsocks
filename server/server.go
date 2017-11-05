@@ -13,9 +13,9 @@ type LsServer struct {
 
 // 新建一个服务端
 // 服务端的职责是:
-// 0.监听来自本地代理客户端的请求
-// 1.解密本地代理客户端请求的数据，解析socks5协议，连接用户浏览器真正想要连接的远程服务器
-// 2.加密后转发用户浏览器真正想要连接的远程服务器返回的数据到本地代理客户端
+// 1. 监听来自本地代理客户端的请求
+// 2. 解密本地代理客户端请求的数据，解析 SOCKS5 协议，连接用户浏览器真正想要连接的远程服务器
+// 3. 转发用户浏览器真正想要连接的远程服务器返回的数据的加密后的内容到本地代理客户端
 func New(password *core.Password, listenAddr *net.TCPAddr) *LsServer {
 	return &LsServer{
 		SecureSocket: &core.SecureSocket{
@@ -51,9 +51,8 @@ func (lsServer *LsServer) Listen(didListen func(listenAddr net.Addr)) error {
 	return nil
 }
 
-// socks5实现
+// 解 SOCKS5 协议
 // https://www.ietf.org/rfc/rfc1928.txt
-// http://www.jianshu.com/p/172810a70fad
 func (lsServer *LsServer) handleConn(localConn *net.TCPConn) {
 	defer localConn.Close()
 	buf := make([]byte, 256)

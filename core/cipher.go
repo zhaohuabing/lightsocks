@@ -7,7 +7,7 @@ type Cipher struct {
 	decodePassword *Password
 }
 
-// 编码原数据
+// 加密原数据
 func (cipher *Cipher) encode(bs []byte) {
 	for i, v := range bs {
 		bs[i] = cipher.encodePassword[v]
