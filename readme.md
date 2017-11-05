@@ -8,6 +8,9 @@
 - 不会放大传输流量，传输流量更少更快，占用资源更少（内存占用1M左右，CPU 占用 0.1% 左右）；
 - 纯 Golang 编写，跨平台。
 
+想了解 Lightsocks 的实现原理？请阅读文章：[你也能写个 Shadowsocks](https://github.com/gwuhaolin/blog/issues/12)。 
+
+
 <a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/3bvxELAxnq8r4wheFyRkED8U/gwuhaolin/lightsocks'>
   <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/3bvxELAxnq8r4wheFyRkED8U/gwuhaolin/lightsocks.svg' />
 </a>
@@ -85,7 +88,6 @@
   "password": "******"
 }
 ```
-
 
 
 
