@@ -1,7 +1,7 @@
 [![Build Status](https://img.shields.io/travis/gwuhaolin/lightsocks.svg?style=flat-square)](https://travis-ci.org/gwuhaolin/lightsocks)
 [![Build Status](https://img.shields.io/appveyor/ci/gwuhaolin/lightsocks.svg?style=flat-square)](https://ci.appveyor.com/project/gwuhaolin/lightsocks)
 
-# Lightsocks
+# [Lightsocks](https://github.com/gwuhaolin/lightsocks)
 一个轻量级网络混淆代理，基于 SOCKS5 协议，可用来代替 Shadowsocks。
 
 - 只专注于混淆，用最简单高效的混淆算法达到目的；
