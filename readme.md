@@ -85,3 +85,5 @@
 
 ## 其它语言实现
 - [lightsocks-python](https://github.com/linw1995/lightsocks-python)：Python 实现版本；
+- [lightsocks-android](https://github.com/XanthusL/LightSocks-Android)：Android 实现版本；
+
