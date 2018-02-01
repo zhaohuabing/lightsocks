@@ -83,6 +83,8 @@
 }
 ```
 
+如果你想自定义保持配置文件的名称，可以通过 `lightsocks-local your-name.json` 启动，这时配置文件会保存到 `~/your-name.json` 中。
+
 ## 其它语言实现
 - [lightsocks-python](https://github.com/linw1995/lightsocks-python)：Python 实现版本；
 - [lightsocks-android](https://github.com/XanthusL/LightSocks-Android)：Android 实现版本；
