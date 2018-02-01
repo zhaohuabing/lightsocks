@@ -3,15 +3,17 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mitchellh/go-homedir"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
+
+	"github.com/mitchellh/go-homedir"
 )
 
-const (
-	ConfigFileName = ".lightsocks.json"
+var (
+	// 配置文件路径
+	configPath string
 )
 
 type Config struct {
@@ -20,12 +22,15 @@ type Config struct {
 	Password   string `json:"password"`
 }
 
-// 配置文件路径
-var configPath string
-
 func init() {
 	home, _ := homedir.Dir()
-	configPath = path.Join(home, ConfigFileName)
+	// 默认的配置文件名称
+	configFilename := ".lightsocks.json"
+	// 如果用户有传配置文件，就使用用户传入的配置文件
+	if len(os.Args) == 2 {
+		configFilename = os.Args[1]
+	}
+	configPath = path.Join(home, configFilename)
 }
 
 // 保存配置到配置文件
