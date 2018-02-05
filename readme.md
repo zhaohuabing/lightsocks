@@ -1,12 +1,14 @@
 [![Build Status](https://img.shields.io/travis/gwuhaolin/lightsocks.svg?style=flat-square)](https://travis-ci.org/gwuhaolin/lightsocks)
 [![Build Status](https://img.shields.io/appveyor/ci/gwuhaolin/lightsocks.svg?style=flat-square)](https://ci.appveyor.com/project/gwuhaolin/lightsocks)
 
-# Lightsocks
+# [Lightsocks](https://github.com/gwuhaolin/lightsocks)
 一个轻量级网络混淆代理，基于 SOCKS5 协议，可用来代替 Shadowsocks。
 
 - 只专注于混淆，用最简单高效的混淆算法达到目的；
 - 不会放大传输流量，传输流量更少更快，占用资源更少（内存占用1M左右，CPU 占用 0.1% 左右）；
-- 纯 Golang 编写，跨平台。
+- 纯 Golang 编写，跨平台，对Golang感兴趣？请看[Golang 中文学习资料汇总](http://go.wuhaolin.cn/)；
+
+想了解 Lightsocks 的实现原理？请阅读文章：[你也能写个 Shadowsocks](https://github.com/gwuhaolin/blog/issues/12)。 
 
 ## 安装
 去 [releases](https://github.com/gwuhaolin/lightsocks/releases) 页下载最新的可执行文件，注意选择正确的操作系统和位数（Mac 系统内核为 darwin）。
@@ -81,6 +83,9 @@
 }
 ```
 
+如果你想自定义保持配置文件的名称，可以通过 `lightsocks-local your-name.json` 启动，这时配置文件会保存到 `~/your-name.json` 中。
 
-
+## 其它语言实现
+- [lightsocks-python](https://github.com/linw1995/lightsocks-python)：Python 实现版本；
+- [lightsocks-android](https://github.com/XanthusL/LightSocks-Android)：Android 实现版本；
 

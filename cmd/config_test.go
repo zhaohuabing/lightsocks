@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"testing"
-	"os"
 	"encoding/json"
 	"io/ioutil"
+	"os"
+	"testing"
 )
 
 func clearConfigFile() {

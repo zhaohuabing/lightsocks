@@ -1,9 +1,9 @@
 package core
 
 import (
-	"testing"
-	"sort"
 	"reflect"
+	"sort"
+	"testing"
 )
 
 func (password *Password) Len() int {
@@ -24,7 +24,7 @@ func TestRandPassword(t *testing.T) {
 	sort.Sort(password)
 	for i := 0; i < PasswordLength; i++ {
 		if password[i] != byte(i) {
-			t.Error("不能出现任何一个重复的byte位，必须又 0-255 组成，并且都需要包含")
+			t.Error("不能出现任何一个重复的byte位，必须由 0-255 组成，并且都需要包含")
 		}
 	}
 }

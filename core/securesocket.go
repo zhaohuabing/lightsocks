@@ -1,10 +1,10 @@
 package core
 
 import (
-	"net"
 	"errors"
 	"fmt"
 	"io"
+	"net"
 )
 
 const (
