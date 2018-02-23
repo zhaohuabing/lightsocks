@@ -20,7 +20,7 @@ server 端与 client 端切换可以通过更改 `LIGHT_MODULE` 环境变量值�
 **由于 lightsocks 的配置文件是自动生成的，所以需要先让服务端帮我们生成一个配置文件，出现密码后 Ctrl+c 停止即可**
 
 ``` sh
-docker run --rm -it -v `pwd`:/root mritd/lightsocks:1.0.3
+docker run --rm -it -v `pwd`:/root lightsocks
 ```
 
 **查看 server 端生成的 `.lightsocks.json` 中的端口和密码**
@@ -38,7 +38,7 @@ cat .lightsocks.json
 **重新启动 server 端并增加 docker 的端口映射**
 
 ``` sh
-docker run -d --name lsserver -v `pwd`:/root -p 43413:43413 --restart=always mritd/lightsocks:1.0.3 lightsocks-server
+docker run -d --name lsserver -v `pwd`:/root -p 43413:43413 --restart=always lightsocks lightsocks-server
 ```
 
 #### 2.2、客户端
@@ -53,7 +53,7 @@ cat > .lightsocks.json <<EOF
     "password": "vfpfHaoIliU7odM036nYvLXolOn8hb53dtfFu9vtZ530le9ywWsBfHomaLmCiyhvQRsKPVWn1A9DW/OOpGWuLAyQAwvdFmQ2tvkVik+Y8SqSLQUN2TD4E3irOTOJTqBU3OrOISRRAvVN/WBWI9F+FMKcccNjIoQY7kddEfCPppNSysdIrH9tPkJckXk4EFBz3uZEuBqjgSscRln+bEW6PzxqWIduSa2yIA7AMajnl17ymvd7Euxm0st0cLcvJy4fiDfPUwfkg7SGBtCMacml69oy4p/jm6/ESwDWgKJXfb9iNUDN5QTM4cbVGY11SrEJ+7Ow9h6eYVqZF0wp4P/IOg=="
 }
 EOF
-docker run -d --name lsclient -v `pwd`:/root -p 43413:43413 --restart=always mritd/lightsocks:1.0.3 lightsocks-local
+docker run -d --name lsclient -v `pwd`:/root -p 43413:43413 --restart=always lightsocks lightsocks-local
 ```
 
 ### 三、使用 docker-compose 启动
@@ -64,7 +64,7 @@ docker run -d --name lsclient -v `pwd`:/root -p 43413:43413 --restart=always mri
 version: '2' 
 services:
   lightsocks:
-    image: mritd/lightsocks:1.0.3
+    image: lightsocks
     restart: always
     volumes: 
       - ./:/root
