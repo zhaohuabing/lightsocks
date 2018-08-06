@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"path"
-
 	"github.com/mitchellh/go-homedir"
 )
 
