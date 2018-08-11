@@ -1,5 +1,6 @@
-[![Build Status](https://img.shields.io/travis/gwuhaolin/lightsocks.svg?style=flat-square)](https://travis-ci.org/gwuhaolin/lightsocks)
-[![Build Status](https://img.shields.io/appveyor/ci/gwuhaolin/lightsocks.svg?style=flat-square)](https://ci.appveyor.com/project/gwuhaolin/lightsocks)
+[![Mac Build Status](https://img.shields.io/travis/gwuhaolin/lightsocks.svg?style=flat-square)](https://travis-ci.org/gwuhaolin/lightsocks)
+[![Windows Build Status](https://img.shields.io/appveyor/ci/gwuhaolin/lightsocks.svg?style=flat-square)](https://ci.appveyor.com/project/gwuhaolin/lightsocks)
+[![GoDoc](http://img.shields.io/badge/godoc-reference-5272B4.svg?style=flat-square)](https://godoc.org/github.com/gwuhaolin/lightsocks)
 
 # [Lightsocks](https://github.com/gwuhaolin/lightsocks)
 一个轻量级网络混淆代理，基于 SOCKS5 协议，可用来代替 Shadowsocks。
