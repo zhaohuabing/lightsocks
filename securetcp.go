@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	BufSize = 1024
+	bufSize = 1024
 )
 
 // 加密传输的 TCP Socket
@@ -34,7 +34,7 @@ func (secureSocket *SecureTCPConn) EncodeWrite(bs []byte) (int, error) {
 
 // 从src中源源不断的读取原数据加密后写入到dst，直到src中没有数据可以再读取
 func (secureSocket *SecureTCPConn) EncodeCopy(dst *net.TCPConn) error {
-	buf := make([]byte, BufSize)
+	buf := make([]byte, bufSize)
 	for {
 		readCount, errRead := secureSocket.Read(buf)
 		if errRead != nil {
@@ -61,7 +61,7 @@ func (secureSocket *SecureTCPConn) EncodeCopy(dst *net.TCPConn) error {
 
 // 从src中源源不断的读取加密后的数据解密后写入到dst，直到src中没有数据可以再读取
 func (secureSocket *SecureTCPConn) DecodeCopy(dst *net.TCPConn) error {
-	buf := make([]byte, BufSize)
+	buf := make([]byte, bufSize)
 	for {
 		readCount, errRead := secureSocket.DecodeRead(buf)
 		if errRead != nil {
