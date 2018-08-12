@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/gwuhaolin/lightsocks"
 	"github.com/gwuhaolin/lightsocks/cmd"
-	"github.com/gwuhaolin/lightsocks/core"
 	"log"
 	"net"
 )
@@ -25,7 +25,7 @@ func main() {
 	config.SaveConfig()
 
 	// 启动 local 端并监听
-	lsLocal, err := core.NewLsLocal(config.Password, config.ListenAddr, config.RemoteAddr)
+	lsLocal, err := lightsocks.NewLsLocal(config.Password, config.ListenAddr, config.RemoteAddr)
 	if err != nil {
 		log.Fatalln(err)
 	}

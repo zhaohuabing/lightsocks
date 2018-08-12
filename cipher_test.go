@@ -14,7 +14,8 @@ const (
 func TestCipher(t *testing.T) {
 	password := RandPassword()
 	t.Log(password)
-	cipher := newCipher(password)
+	p, _ := parsePassword(password)
+	cipher := newCipher(p)
 	// 原数据
 	org := make([]byte, passwordLength)
 	for i := 0; i < passwordLength; i++ {
@@ -37,7 +38,8 @@ func TestCipher(t *testing.T) {
 
 func BenchmarkEncode(b *testing.B) {
 	password := RandPassword()
-	cipher := newCipher(password)
+	p, _ := parsePassword(password)
+	cipher := newCipher(p)
 	bs := make([]byte, MB)
 	b.ResetTimer()
 	rand.Read(bs)
@@ -46,7 +48,8 @@ func BenchmarkEncode(b *testing.B) {
 
 func BenchmarkDecode(b *testing.B) {
 	password := RandPassword()
-	cipher := newCipher(password)
+	p, _ := parsePassword(password)
+	cipher := newCipher(p)
 	bs := make([]byte, MB)
 	b.ResetTimer()
 	rand.Read(bs)

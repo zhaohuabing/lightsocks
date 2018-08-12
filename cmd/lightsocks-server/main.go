@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/gwuhaolin/lightsocks"
 	"github.com/gwuhaolin/lightsocks/cmd"
-	"github.com/gwuhaolin/lightsocks/core"
 	"github.com/phayes/freeport"
 	"log"
 	"net"
@@ -24,13 +24,13 @@ func main() {
 	config := &cmd.Config{
 		ListenAddr: fmt.Sprintf(":%d", port),
 		// 密码随机生成
-		Password: core.RandPassword(),
+		Password: lightsocks.RandPassword(),
 	}
 	config.ReadConfig()
 	config.SaveConfig()
 
 	// 启动 server 端并监听
-	lsServer, err := core.NewLsServer(config.Password, config.ListenAddr)
+	lsServer, err := lightsocks.NewLsServer(config.Password, config.ListenAddr)
 	if err != nil {
 		log.Fatalln(err)
 	}

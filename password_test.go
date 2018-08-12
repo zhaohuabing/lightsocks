@@ -1,8 +1,7 @@
 package lightsocks
 
 import (
-	"reflect"
-	"sort"
+			"sort"
 	"testing"
 )
 
@@ -27,20 +26,9 @@ func TestRandPassword(t *testing.T) {
 	}
 	sort.Sort(bsPassword)
 	for i := 0; i < passwordLength; i++ {
-		if password[i] != byte(i) {
+		if bsPassword[i] != byte(i) {
 			t.Error("不能出现任何一个重复的byte位，必须由 0-255 组成，并且都需要包含")
 		}
 	}
 }
 
-func TestPasswordString(t *testing.T) {
-	password := RandPassword()
-	decodePassword, err := parsePassword(password)
-	if err != nil {
-		t.Error(err)
-	} else {
-		if !reflect.DeepEqual(password, decodePassword) {
-			t.Error("密码转化成字符串后反解后数据不对应")
-		}
-	}
-}

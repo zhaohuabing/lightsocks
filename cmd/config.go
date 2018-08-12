@@ -3,11 +3,11 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mitchellh/go-homedir"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
-	"github.com/mitchellh/go-homedir"
 )
 
 var (
@@ -54,7 +54,7 @@ func (config *Config) ReadConfig() {
 
 		err = json.NewDecoder(file).Decode(config)
 		if err != nil {
-			log.Fatalf("格式不合法的 JSON 配置文件:\n%s", file)
+			log.Fatalf("格式不合法的 JSON 配置文件:\n%s", file.Name())
 		}
 	}
 }
