@@ -1,7 +1,7 @@
 package lightsocks
 
 import (
-			"sort"
+	"sort"
 	"testing"
 )
 
@@ -31,4 +31,3 @@ func TestRandPassword(t *testing.T) {
 		}
 	}
 }
-
