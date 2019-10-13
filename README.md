@@ -18,7 +18,7 @@
 
 
 ## 启动
-#### 启动 lightsocks-server
+### 启动 lightsocks-server
 在代理服务器下载好 lightsocks-server 后，执行命令：
 ```bash
 ./lightsocks-server
@@ -26,18 +26,18 @@
 就可启动服务端，启动成功后会输出如下日志：
 ```
 服务监听地址 listen：
-:54261
+:12315
 密码 password：
 ******
 ```
 假如服务器的 IP 是 45.56.76.5，则以上日志的含义是指：
 
-- 服务监听在 `45.56.76.5:54261`，监听端口54261是随机生成的；
+- 服务监听在 `45.56.76.5:12315`，监听端口12315是随机生成的；
 - 使用的密码是  `******`
 
-除此之外你还可以通过 Docker 命令 `docker run gwuhaolin/lightsocks` 快速启动。
+> 除此之外你还可以通过 Docker 命令 `docker run gwuhaolin/lightsocks` 快速启动。
 
-#### 启动 lightsocks-local
+### 启动 lightsocks-local
 在本地电脑下载好 lightsocks-local 后，执行命令：
 ```bash
 ./lightsocks-local
@@ -51,7 +51,7 @@
 为了让客户端用指定的密码去连接服务器，需要给客户端传入参数，为此需要修改该配置文件为如下：
 ```json
 {
-  "remote": "45.56.76.5:54261",
+  "remote": "45.56.76.5:12315",
   "password": "******"
 }
 ```
@@ -61,11 +61,9 @@
  
 #### 注意：
 - lightsocks-local 和 lightsocks-server 的 password 必须一致才能正常正常使用，password 不要泄露。
-- password 会自动生成，不要自己生成。一般采用拷贝 lightsocks-server 生成的密码到 lightsocks-local 使用的本地配置文件中。
-
-
-只能通过 JSON 文件的方式传参给 lightsocks-local 和 lightsocks-server，启动前会去 `~/.lightsocks.json` 文件中读取配置，启动后会把配置保存在 `~/.lightsocks.json` 文件中，
-其格式为 JSON，内容大致如下：
+- password 会自动生成，不要自己生成。两端的password要保持一致，一般采用拷贝 lightsocks-server 生成的密码到 lightsocks-local 使用的本地配置文件中。
+- 如果你想自定义保持配置文件的名称，可以通过 `lightsocks-local your-name.json` 启动，这时配置文件会保存到 `~/your-name.json` 中。
+- 启动后会把配置保存在 `~/.lightsocks.json` 文件中，启动前会去 `~/.lightsocks.json` 文件中读取配置，你可以在启动前修改`~/.lightsocks.json` 文件来应用你需要的配置，格式如下：
 ```json
 {
   "remote": "45.56.76.5:7448",
@@ -73,8 +71,6 @@
   "listen": "127.0.0.1:7448"
 }
 ```
-
-如果你想自定义保持配置文件的名称，可以通过 `lightsocks-local your-name.json` 启动，这时配置文件会保存到 `~/your-name.json` 中。
 
 ## 其它语言实现
 - [lightsocks-python](https://github.com/linw1995/lightsocks-python)：Python语言 实现版本；
