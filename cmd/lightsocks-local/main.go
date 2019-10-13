@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/gwuhaolin/lightsocks"
-	"github.com/gwuhaolin/lightsocks/cmd"
 	"log"
 	"net"
+
+	"github.com/gwuhaolin/lightsocks"
+	"github.com/gwuhaolin/lightsocks/cmd"
 )
 
 const (
@@ -30,14 +31,13 @@ func main() {
 		log.Fatalln(err)
 	}
 	log.Fatalln(lsLocal.Listen(func(listenAddr net.Addr) {
-		log.Println("使用配置：", fmt.Sprintf(`
-本地监听地址 listen：
+		log.Println(fmt.Sprintf(`
+lightsocks-local:%s 启动成功，配置如下：
+本地监听地址：
 %s
-远程服务地址 remote：
+远程服务地址：
 %s
-密码 password：
-%s
-	`, listenAddr, config.RemoteAddr, config.Password))
-		log.Printf("lightsocks-local:%s 启动成功 监听在 %s\n", version, listenAddr.String())
+密码：
+%s`, version, listenAddr, config.RemoteAddr, config.Password))
 	}))
 }

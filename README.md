@@ -35,7 +35,7 @@
 - 服务监听在 `45.56.76.5:54261`，监听端口54261是随机生成的；
 - 使用的密码是  `******`
 
-除此之外你还可以快速[通过 Docker 启动](docker/readme.md)。
+除此之外你还可以通过 Docker 命令 `docker run gwuhaolin/lightsocks` 快速启动。
 
 #### 启动 lightsocks-local
 在本地电脑下载好 lightsocks-local 后，执行命令：

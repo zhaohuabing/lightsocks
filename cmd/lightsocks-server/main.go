@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net"
+	"os"
+	"strconv"
+
 	"github.com/gwuhaolin/lightsocks"
 	"github.com/gwuhaolin/lightsocks/cmd"
 	"github.com/phayes/freeport"
-	"log"
-	"net"
 )
 
 var version = "master"
@@ -14,8 +17,12 @@ var version = "master"
 func main() {
 	log.SetFlags(log.Lshortfile)
 
+	// 优先从环境变量中获取监听端口
+	port, err := strconv.Atoi(os.Getenv("LIGHTSOCKS_SERVER_PORT"))
 	// 服务端监听端口随机生成
-	port, err := freeport.GetFreePort()
+	if err != nil {
+		port, err = freeport.GetFreePort()
+	}
 	if err != nil {
 		// 随机端口失败就采用 7448
 		port = 7448
@@ -35,12 +42,11 @@ func main() {
 		log.Fatalln(err)
 	}
 	log.Fatalln(lsServer.Listen(func(listenAddr net.Addr) {
-		log.Println("使用配置：", fmt.Sprintf(`
-服务监听地址 listen：
+		log.Println(fmt.Sprintf(`
+lightsocks-server:%s 启动成功，配置如下：
+服务监听地址：
 %s
-密码 password：
-%s
-	`, listenAddr, config.Password))
-		log.Printf("lightsocks-server:%s 启动成功 监听在 %s\n", version, listenAddr.String())
+密码：
+%s`, version, listenAddr, config.Password))
 	}))
 }
