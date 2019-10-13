@@ -1,24 +1,24 @@
-name: Go
+name: Test
 on: [push]
 jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest,windows-latest,macOS-latest]
     steps:
 
-    - name: Set up Go 1.13
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.13
-      id: go
+      - name: Set up Go 1.13
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+        id: go
 
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v1
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v1
 
-    - name: Get dependencies
-      run: |
-        go mod tidy
+      - name: Get dependencies
+        run: |
+          go mod tidy
 
-    - name: Test
-      run: go test ./...
+      - name: Test
+        run: go test ./...
