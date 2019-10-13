@@ -1,15 +1,14 @@
 name: Test
 on: [push]
 jobs:
-
-  build:
+  test:
     name: Build
     runs-on: ${{ matrix.os }}
-      strategy:
-        matrix:
-          os: [ubuntu-latest, windows-latest, macOS-latest]
-    steps:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
 
+    steps:
       - name: Set up Go 1.13
         uses: actions/setup-go@v1
         with:
