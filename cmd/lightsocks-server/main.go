@@ -36,7 +36,7 @@ func main() {
 	}
 	log.Fatalln(lsServer.Listen(func(listenAddr net.Addr) {
 		log.Println("使用配置：", fmt.Sprintf(`
-本地监听地址 listen：
+服务监听地址 listen：
 %s
 密码 password：
 %s
