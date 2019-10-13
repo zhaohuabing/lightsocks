@@ -14,13 +14,9 @@ jobs:
         with:
           go-version: 1.13
         id: go
-
       - name: Check out code into the Go module directory
         uses: actions/checkout@v1
-
       - name: Get dependencies
-        run: |
-          go mod tidy
-
+        run: go mod tidy
       - name: Test
         run: go test ./...
