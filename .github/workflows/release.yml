@@ -1,8 +1,12 @@
 name: goreleaser
-on: [push]
+on:
+  label:
+    types: [created]
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Set up Go 1.13
         uses: actions/setup-go@v1
@@ -15,6 +19,3 @@ jobs:
         run: go mod tidy
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v1
-        with:
-          version: latest
-          args: release
