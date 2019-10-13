@@ -1,0 +1,28 @@
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - binary: lightsocks-local
+    id: lightsocks-local
+    main: ./cmd/lightsocks-local/main.go
+    goos:
+      - windows
+      - darwin
+      - linux
+      - freebsd
+    goarch:
+      - amd64
+      - 386
+      - arm
+  - binary: lightsocks-server
+    id: lightsocks-server
+    main: ./cmd/lightsocks-server/main.go
+    goos:
+      - windows
+      - darwin
+      - linux
+      - freebsd
+    goarch:
+      - amd64
+      - 386
+      - arm
