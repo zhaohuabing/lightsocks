@@ -8,7 +8,7 @@ ENV LIGHTSOCKS_DOWNLOAD_URL https://github.com/gwuhaolin/lightsocks/releases/dow
 
 RUN apk upgrade --update
 RUN apk add --no-cache curl tar
-RUN curl -sSLO ${LIGHTSOCKS_DOWNLOAD_URL}
+RUN curl -SLO ${LIGHTSOCKS_DOWNLOAD_URL}
 RUN tar -zxf lightsocks_${LIGHTSOCKS_VERSION}_linux_amd64.tar.gz
 RUN apk del curl tar
 RUN rm -rf lightsocks-local lightsocks_${LIGHTSOCKS_VERSION}_linux_amd64.tar.gz readme.md

@@ -17,5 +17,11 @@ jobs:
         uses: actions/checkout@v1
       - name: Get dependencies
         run: go mod tidy
-      - name: Run GoReleaser
+      - name: GoReleaser
         uses: goreleaser/goreleaser-action@v1
+      - name: Docker Releaser
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: gwuhaolin/lightsocks
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
