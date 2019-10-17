@@ -26,3 +26,5 @@ builds:
       - amd64
       - 386
       - arm
+    hooks:
+      post: cp ./dist/lightsocks-server_linux_amd64/lightsocks-server ./lightsocks-server
