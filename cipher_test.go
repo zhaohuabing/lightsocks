@@ -17,12 +17,15 @@ func TestCipher(t *testing.T) {
 	p, _ := parsePassword(password)
 	cipher := newCipher(p)
 	// 原数据
-	org := make([]byte, passwordLength)
+	org := make([]byte, passwordLength*2)
 	for i := 0; i < passwordLength; i++ {
 		org[i] = byte(i)
 	}
+	for i := passwordLength; i < passwordLength*2; i++ {
+		org[i] = byte(i+10)
+	}
 	// 复制一份原数据到 tmp
-	tmp := make([]byte, passwordLength)
+	tmp := make([]byte, passwordLength*2)
 	copy(tmp, org)
 	t.Log(tmp)
 	// 加密 tmp
