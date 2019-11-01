@@ -5,8 +5,8 @@ import (
 	"log"
 	"net"
 
-	"github.com/gwuhaolin/lightsocks"
-	"github.com/gwuhaolin/lightsocks/cmd"
+	"lightsocks"
+	"lightsocks/cmd"
 )
 
 const (

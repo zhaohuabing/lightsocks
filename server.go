@@ -61,7 +61,6 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 	if err != nil || buf[0] != 0x05 {
 		return
 	}
-	log.Println(buf)
 	/**
 	   The dstServer selects from one of the methods given in METHODS, and
 	   sends a METHOD selection message:

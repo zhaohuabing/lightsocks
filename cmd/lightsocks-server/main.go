@@ -7,8 +7,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/gwuhaolin/lightsocks"
-	"github.com/gwuhaolin/lightsocks/cmd"
+	"lightsocks"
+	"lightsocks/cmd"
 	"github.com/phayes/freeport"
 )
 
@@ -41,12 +41,12 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Fatalln(lsServer.Listen(func(listenAddr net.Addr) {
+	lsServer.Listen(func(listenAddr net.Addr) {
 		log.Println(fmt.Sprintf(`
 lightsocks-server:%s 启动成功，配置如下：
 服务监听地址：
 %s
 密码：
 %s`, version, listenAddr, config.Password))
-	}))
+	})
 }
