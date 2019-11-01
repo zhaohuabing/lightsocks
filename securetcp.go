@@ -100,6 +100,7 @@ func DialTCPSecure(raddr *net.TCPAddr, password *password) (*SecureTCPConn, erro
 
 // see net.ListenTCP
 func ListenSecureTCP(laddr *net.TCPAddr, password *password, handleConn func(localConn *SecureTCPConn), didListen func(listenAddr net.Addr)) error {
+	log.Println("Try listen on ")
 	log.Println("Try listen on : ", laddr)
 	listener, err := net.ListenTCP("tcp", laddr)
 	log.Println("Start listen on : ", laddr)
