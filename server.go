@@ -61,7 +61,7 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 	if err != nil || buf[0] != 0x05 {
 		return
 	}
-
+	log.Println(buf)
 	/**
 	   The dstServer selects from one of the methods given in METHODS, and
 	   sends a METHOD selection message:
@@ -87,6 +87,7 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 	n, err := localConn.DecodeRead(buf)
 	// n 最短的长度为7 情况为 ATYP=3 DST.ADDR占用1字节 值为0x0
 	if err != nil || n < 7 {
+		log.Println(err)
 		return
 	}
 
@@ -94,6 +95,7 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 	// CONNECT X'01'
 	if buf[1] != 0x01 {
 		// 目前只支持 CONNECT
+		log.Println("Can't handle command: ", buf[1])
 		return
 	}
 
@@ -107,6 +109,7 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 		//	DOMAINNAME: X'03'
 		ipAddr, err := net.ResolveIPAddr("ip", string(buf[5:n-2]))
 		if err != nil {
+			log.Println("Can't resolve IP: ", err)
 			return
 		}
 		dIP = ipAddr.IP
@@ -114,6 +117,7 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 		//	IP V6 address: X'04'
 		dIP = buf[4 : 4+net.IPv6len]
 	default:
+		log.Println("Can't handle address: ", buf[3])
 		return
 	}
 	dPort := buf[n-2:]
