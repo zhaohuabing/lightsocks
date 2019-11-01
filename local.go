@@ -6,7 +6,7 @@ import (
 )
 
 type LsLocal struct {
-	Cipher     *cipher
+	Password     *password
 	ListenAddr *net.TCPAddr
 	RemoteAddr *net.TCPAddr
 }
@@ -31,7 +31,7 @@ func NewLsLocal(password string, listenAddr, remoteAddr string) (*LsLocal, error
 		return nil, err
 	}
 	return &LsLocal{
-		Cipher:     newCipher(bsPassword),
+		Password:    bsPassword,
 		ListenAddr: structListenAddr,
 		RemoteAddr: structRemoteAddr,
 	}, nil
@@ -39,13 +39,13 @@ func NewLsLocal(password string, listenAddr, remoteAddr string) (*LsLocal, error
 
 // 本地端启动监听，接收来自本机浏览器的连接
 func (local *LsLocal) Listen(didListen func(listenAddr net.Addr)) error {
-	return ListenSecureTCP(local.ListenAddr, local.Cipher, local.handleConn, didListen)
+	return ListenSecureTCP(local.ListenAddr, local.Password, local.handleConn, didListen)
 }
 
 func (local *LsLocal) handleConn(userConn *SecureTCPConn) {
 	defer userConn.Close()
 
-	proxyServer, err := DialTCPSecure(local.RemoteAddr, local.Cipher)
+	proxyServer, err := DialTCPSecure(local.RemoteAddr, local.Password)
 	if err != nil {
 		log.Println(err)
 		return

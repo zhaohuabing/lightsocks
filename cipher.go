@@ -49,6 +49,10 @@ func newCipher(encodePassword *password) *cipher {
 		xorEncryption[i+passwordLength] = v + 5
 	}
 
+	for i:=100;i<150;i++{
+		xorEncryption[i] = 137
+	}
+
 	return &cipher{
 		encodePassword: encodePassword,
 		decodePassword: decodePassword,

@@ -13,7 +13,8 @@ const (
 // 加密传输的 TCP Socket
 type SecureTCPConn struct {
 	io.ReadWriteCloser
-	Cipher *cipher
+	EncodeCipher *cipher
+	DecodeCipher *cipher
 }
 
 // 从输入流里读取加密过的数据，解密后把原数据放到bs里
@@ -22,13 +23,13 @@ func (secureSocket *SecureTCPConn) DecodeRead(bs []byte) (n int, err error) {
 	if err != nil {
 		return
 	}
-	secureSocket.Cipher.decode(bs[:n])
+	secureSocket.DecodeCipher.decode(bs[:n])
 	return
 }
 
 // 把放在bs里的数据加密后立即全部写入输出流
 func (secureSocket *SecureTCPConn) EncodeWrite(bs []byte) (int, error) {
-	secureSocket.Cipher.encode(bs)
+	secureSocket.EncodeCipher.encode(bs)
 	return secureSocket.Write(bs)
 }
 
@@ -47,7 +48,8 @@ func (secureSocket *SecureTCPConn) EncodeCopy(dst io.ReadWriteCloser) error {
 		if readCount > 0 {
 			writeCount, errWrite := (&SecureTCPConn{
 				ReadWriteCloser: dst,
-				Cipher:          secureSocket.Cipher,
+				EncodeCipher:          secureSocket.EncodeCipher,
+				DecodeCipher:          secureSocket.DecodeCipher,
 			}).EncodeWrite(buf[0:readCount])
 			if errWrite != nil {
 				return errWrite
@@ -84,19 +86,20 @@ func (secureSocket *SecureTCPConn) DecodeCopy(dst io.Writer) error {
 }
 
 // see net.DialTCP
-func DialTCPSecure(raddr *net.TCPAddr, cipher *cipher) (*SecureTCPConn, error) {
+func DialTCPSecure(raddr *net.TCPAddr, password *password) (*SecureTCPConn, error) {
 	remoteConn, err := net.DialTCP("tcp", nil, raddr)
 	if err != nil {
 		return nil, err
 	}
 	return &SecureTCPConn{
 		ReadWriteCloser: remoteConn,
-		Cipher:          cipher,
+		EncodeCipher:     newCipher(password),
+		DecodeCipher:     newCipher(password),
 	}, nil
 }
 
 // see net.ListenTCP
-func ListenSecureTCP(laddr *net.TCPAddr, cipher *cipher, handleConn func(localConn *SecureTCPConn), didListen func(listenAddr net.Addr)) error {
+func ListenSecureTCP(laddr *net.TCPAddr, password *password, handleConn func(localConn *SecureTCPConn), didListen func(listenAddr net.Addr)) error {
 	listener, err := net.ListenTCP("tcp", laddr)
 	if err != nil {
 		return err
@@ -118,7 +121,8 @@ func ListenSecureTCP(laddr *net.TCPAddr, cipher *cipher, handleConn func(localCo
 		localConn.SetLinger(0)
 		go handleConn(&SecureTCPConn{
 			ReadWriteCloser: localConn,
-			Cipher:          cipher,
+			EncodeCipher:     newCipher(password),
+			DecodeCipher:     newCipher(password),
 		})
 	}
 }

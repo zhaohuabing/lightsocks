@@ -15,24 +15,26 @@ func TestCipher(t *testing.T) {
 	password := RandPassword()
 	t.Log(password)
 	p, _ := parsePassword(password)
-	cipher := newCipher(p)
+	encodeCipher := newCipher(p)
+	decodeCipher := newCipher(p)
 	// 原数据
-	org := make([]byte, passwordLength*2)
-	for i := 0; i < passwordLength; i++ {
+	org := make([]byte, 300)
+	for i := 0; i < 300; i++ {
 		org[i] = byte(i)
 	}
-	for i := passwordLength; i < passwordLength*2; i++ {
-		org[i] = byte(i+10)
-	}
+	/*for i := passwordLength; i < passwordLength*2; i++ {
+
+		org[i] = byte(i)
+	}*/
 	// 复制一份原数据到 tmp
-	tmp := make([]byte, passwordLength*2)
+	tmp := make([]byte, 300)
 	copy(tmp, org)
 	t.Log(tmp)
 	// 加密 tmp
-	cipher.encode(tmp)
+	encodeCipher.encode(tmp)
 	t.Log(tmp)
 	// 解密 tmp
-	cipher.decode(tmp)
+	decodeCipher.decode(tmp)
 	t.Log(tmp)
 	if !reflect.DeepEqual(org, tmp) {
 		t.Error("解码编码数据后无法还原数据，数据不对应")

@@ -6,7 +6,7 @@ import (
 )
 
 type LsServer struct {
-	Cipher     *cipher
+	Password     *password
 	ListenAddr *net.TCPAddr
 }
 
@@ -25,7 +25,7 @@ func NewLsServer(password string, listenAddr string) (*LsServer, error) {
 		return nil, err
 	}
 	return &LsServer{
-		Cipher:     newCipher(bsPassword),
+		Password:     bsPassword,
 		ListenAddr: structListenAddr,
 	}, nil
 
@@ -33,7 +33,7 @@ func NewLsServer(password string, listenAddr string) (*LsServer, error) {
 
 // 运行服务端并且监听来自本地代理客户端的请求
 func (lsServer *LsServer) Listen(didListen func(listenAddr net.Addr)) error {
-	return ListenSecureTCP(lsServer.ListenAddr, lsServer.Cipher, lsServer.handleConn, didListen)
+	return ListenSecureTCP(lsServer.ListenAddr, lsServer.Password, lsServer.handleConn, didListen)
 }
 
 // 解 SOCKS5 协议
@@ -154,7 +154,8 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 	}()
 	// 从 dstServer 读取数据发送到 localUser，这里因为处在翻墙阶段出现网络错误的概率更大
 	(&SecureTCPConn{
-		Cipher:          localConn.Cipher,
+		EncodeCipher:          localConn.EncodeCipher,
+		DecodeCipher:          localConn.DecodeCipher,
 		ReadWriteCloser: dstServer,
 	}).EncodeCopy(localConn)
 }
