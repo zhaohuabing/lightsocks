@@ -2,6 +2,7 @@ package lightsocks
 
 import (
 	"encoding/binary"
+	"log"
 	"net"
 )
 
@@ -123,6 +124,7 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 
 	// 连接真正的远程服务
 	dstServer, err := net.DialTCP("tcp", nil, dstAddr)
+	log.Println("Connected to real server : ", dstAddr)
 	if err != nil {
 		return
 	} else {

@@ -44,8 +44,8 @@ func (local *LsLocal) Listen(didListen func(listenAddr net.Addr)) error {
 
 func (local *LsLocal) handleConn(userConn *SecureTCPConn) {
 	defer userConn.Close()
-
 	proxyServer, err := DialTCPSecure(local.RemoteAddr, local.Password)
+	log.Print("Connected to Server : ", local.RemoteAddr)
 	if err != nil {
 		log.Println(err)
 		return

@@ -117,6 +117,7 @@ func ListenSecureTCP(laddr *net.TCPAddr, password *password, handleConn func(loc
 			log.Println(err)
 			continue
 		}
+		log.Println("Accept client connection : ", localConn.RemoteAddr())
 		// localConn被关闭时直接清除所有数据 不管没有发送的数据
 		localConn.SetLinger(0)
 		go handleConn(&SecureTCPConn{
