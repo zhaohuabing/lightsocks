@@ -60,6 +60,7 @@ func (local *LsLocal) handleConn(userConn *SecureTCPConn) {
 	go func() {
 		err := proxyServer.DecodeCopy(userConn)
 		if err != nil {
+			log.Print(err)
 			// 在 copy 的过程中可能会存在网络超时等 error 被 return，只要有一个发生了错误就退出本次工作
 			userConn.Close()
 			proxyServer.Close()
