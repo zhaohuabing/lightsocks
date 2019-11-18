@@ -9,7 +9,7 @@ import (
 )
 
 const passwordLength = 256
-const xorEncryptionLength = passwordLength*2
+const xorEncryptionLength = passwordLength*4
 
 type password [passwordLength]byte
 

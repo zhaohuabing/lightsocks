@@ -1,5 +1,9 @@
 package lightsocks
 
+import(
+	"time"
+)
+
 type cipher struct {
 	// 编码用的密码
 	encodePassword *password
@@ -41,22 +45,25 @@ func newCipher(encodePassword *password) *cipher {
 		encodePassword[i] = v
 		decodePassword[v] = byte(i)
 	}
-	var xorEncryption [512]byte
+	var xorEncryption [xorEncryptionLength]byte
 	for i, v := range encodePassword {
-		xorEncryption[i] = v - 5
+		xorEncryption[i] = v
 	}
 	for i, v := range decodePassword {
-		xorEncryption[i+passwordLength] = v + 5
+		xorEncryption[i+passwordLength] = v
 	}
-
-	for i:=100;i<150;i++{
-		xorEncryption[i] = 137
+	for i, v := range encodePassword {
+		xorEncryption[3*passwordLength-i-1] = v
 	}
+	for i, v := range decodePassword {
+		xorEncryption[4*passwordLength-i-1] = v
+	}
+	seed := time.Now().UTC().Minute()
 
 	return &cipher{
 		encodePassword: encodePassword,
 		decodePassword: decodePassword,
 		xorEncryption:  xorEncryption,
-		xorIndex:       123,
+		xorIndex:       seed,
 	}
 }

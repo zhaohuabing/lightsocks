@@ -6,7 +6,7 @@ import (
 )
 
 type LsLocal struct {
-	Password     *password
+	Password   *password
 	ListenAddr *net.TCPAddr
 	RemoteAddr *net.TCPAddr
 }
@@ -31,7 +31,7 @@ func NewLsLocal(password string, listenAddr, remoteAddr string) (*LsLocal, error
 		return nil, err
 	}
 	return &LsLocal{
-		Password:    bsPassword,
+		Password:   bsPassword,
 		ListenAddr: structListenAddr,
 		RemoteAddr: structRemoteAddr,
 	}, nil

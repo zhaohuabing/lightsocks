@@ -7,7 +7,7 @@ import (
 )
 
 type LsServer struct {
-	Password     *password
+	Password   *password
 	ListenAddr *net.TCPAddr
 }
 
@@ -26,7 +26,7 @@ func NewLsServer(password string, listenAddr string) (*LsServer, error) {
 		return nil, err
 	}
 	return &LsServer{
-		Password:     bsPassword,
+		Password:   bsPassword,
 		ListenAddr: structListenAddr,
 	}, nil
 
@@ -41,8 +41,9 @@ func (lsServer *LsServer) Listen(didListen func(listenAddr net.Addr)) error {
 // https://www.ietf.org/rfc/rfc1928.txt
 func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 	defer localConn.Close()
-	buf := make([]byte, 256)
 
+	//Version identifier/method selection request from client
+	buf := make([]byte, 3)
 	/**
 	   The localConn connects to the dstServer, and sends a ver
 	   identifier/method selection message:
@@ -56,9 +57,11 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 	   appear in the METHODS field.
 	*/
 	// 第一个字段VER代表Socks的版本，Socks5默认为0x05，其固定长度为1个字节
-	_, err := localConn.DecodeRead(buf)
+	n, err := localConn.DecodeRead(buf)
+	log.Printf("first request: %v", buf)
 	// 只支持版本5
-	if err != nil || buf[0] != 0x05 {
+	if err != nil || buf[0] != 0x05 || n < 3 {
+		log.Printf("Can't handle the request: %v %v", buf, err)
 		return
 	}
 	/**
@@ -82,11 +85,12 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 	  +----+-----+-------+------+----------+----------+
 	*/
 
-	// 获取真正的远程服务的地址
-	n, err := localConn.DecodeRead(buf)
-	// n 最短的长度为7 情况为 ATYP=3 DST.ADDR占用1字节 值为0x0
-	if err != nil || n < 7 {
-		log.Println(err)
+	//Connect request
+	buf = make([]byte, 4)
+	n, err = localConn.DecodeRead(buf)
+	log.Printf("first half of second request: %v", buf)
+	if err != nil || n < 4 {
+		log.Printf("Can't handle the request: %v %v", buf, err)
 		return
 	}
 
@@ -98,15 +102,43 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 		return
 	}
 
-	var dIP []byte
-	// aType 代表请求的远程服务器地址类型，值长度1个字节，有三种类型
-	switch buf[3] {
+	var addrLength int
+	addrType := buf[3]
+	switch addrType {
 	case 0x01:
 		//	IP V4 address: X'01'
-		dIP = buf[4 : 4+net.IPv4len]
+		addrLength = net.IPv4len
 	case 0x03:
 		//	DOMAINNAME: X'03'
-		ipAddr, err := net.ResolveIPAddr("ip", string(buf[5:n-2]))
+		buf = make([]byte, 1)
+		localConn.DecodeRead(buf)
+		addrLength = int(buf[0])
+	case 0x04:
+		//	IP V6 address: X'04'
+		addrLength = net.IPv6len
+	default:
+		log.Println("Invalid address type: ", addrType)
+		return
+	}
+	addrLength += 2
+
+	buf = make([]byte, addrLength)
+	n, err = localConn.DecodeRead(buf)
+	log.Printf("second half of second request: %v", buf)
+	if err != nil || n < addrLength {
+		log.Printf("Error reading address, address length: %v, buffer:%v  %v n: %v ", addrLength, buf, err, n)
+		return
+	}
+
+	var dIP []byte
+	// aType 代表请求的远程服务器地址类型，值长度1个字节，有三种类型
+	switch addrType {
+	case 0x01:
+		//	IP V4 address: X'01'
+		dIP = buf[0:net.IPv4len]
+	case 0x03:
+		//	DOMAINNAME: X'03'
+		ipAddr, err := net.ResolveIPAddr("ip", string(buf[0:n-2]))
 		if err != nil {
 			log.Println("Can't resolve IP: ", err)
 			return
@@ -114,7 +146,7 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 		dIP = ipAddr.IP
 	case 0x04:
 		//	IP V6 address: X'04'
-		dIP = buf[4 : 4+net.IPv6len]
+		dIP = buf[0:net.IPv6len]
 	default:
 		log.Println("Can't handle address: ", buf[3])
 		return
@@ -127,10 +159,11 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 
 	// 连接真正的远程服务
 	dstServer, err := net.DialTCP("tcp", nil, dstAddr)
-	log.Println("Connected to real server : ", dstAddr)
 	if err != nil {
+		log.Println("Error occurred when connecting to real server : ", dstAddr)
 		return
 	} else {
+		log.Println("Connected to real server : ", dstAddr)
 		defer dstServer.Close()
 		// Conn被关闭时直接清除所有数据 不管没有发送的数据
 		dstServer.SetLinger(0)
@@ -159,8 +192,8 @@ func (lsServer *LsServer) handleConn(localConn *SecureTCPConn) {
 	}()
 	// 从 dstServer 读取数据发送到 localUser，这里因为处在翻墙阶段出现网络错误的概率更大
 	(&SecureTCPConn{
-		EncodeCipher:          localConn.EncodeCipher,
-		DecodeCipher:          localConn.DecodeCipher,
+		EncodeCipher:    localConn.EncodeCipher,
+		DecodeCipher:    localConn.DecodeCipher,
 		ReadWriteCloser: dstServer,
 	}).EncodeCopy(localConn)
 }
