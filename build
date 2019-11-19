@@ -1,0 +1,5 @@
+go build -o light-server cmd/lightsocks-server/main.go
+go build -o light-client cmd/lightsocks-local/main.go
+OS=android GOARCH=386  go build -o light-android-386 cmd/lightsocks-local/main.go
+OS=android GOARCH=arm64  go build -o light-android-arm cmd/lightsocks-local/main.go
+
