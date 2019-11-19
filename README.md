@@ -1,4 +1,8 @@
-A ported and modified version of [Lightsocks](https://github.com/gwuhaolin/lightsocks), used as my own vpn solution to access oversea network. 
+A ported and modified version of [Lightsocks](https://github.com/gwuhaolin/lightsocks), used as my own vpn solution to access oversea network. Because it's not been widely used by many people, so the firewall may not notice its traffic pattern and hence it may not been blocked, at least now it works very well.
+
+The Android client: https://github.com/zhaohuabing/lightsocks-android
+
+Do not use it directly! I encourage you slighty change the encoding algorithm of the socks5 server to build your own VPN solution.
 
 Below is the original docs of Lightsocks:
 
