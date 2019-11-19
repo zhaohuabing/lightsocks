@@ -30,6 +30,10 @@ func main() {
 		Password: args[2],
 	}
 
+	if len(args) == 4{
+
+	}
+
 	// 启动 local 端并监听
 	lsLocal, err := lightsocks.NewLsLocal(config.Password, config.ListenAddr, config.RemoteAddr)
 	if err != nil {

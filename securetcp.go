@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"sync"
 	"syscall"
 	"time"
 )
@@ -19,6 +20,13 @@ type SecureTCPConn struct {
 	EncodeCipher *cipher
 	DecodeCipher *cipher
 }
+
+var (
+	Tx     uint64
+	Rx     uint64
+	TxLock sync.RWMutex
+	RxLock sync.RWMutex
+)
 
 // 从输入流里读取加密过的数据，解密后把原数据放到bs里
 func (secureSocket *SecureTCPConn) DecodeRead(bs []byte) (n int, err error) {
@@ -60,6 +68,10 @@ func (secureSocket *SecureTCPConn) EncodeCopy(dst io.ReadWriteCloser) error {
 			if readCount != writeCount {
 				return io.ErrShortWrite
 			}
+
+			TxLock.Lock()
+			Tx += uint64(readCount)
+			TxLock.Unlock()
 		}
 	}
 }
@@ -84,6 +96,10 @@ func (secureSocket *SecureTCPConn) DecodeCopy(dst io.Writer) error {
 			if readCount != writeCount {
 				return io.ErrShortWrite
 			}
+
+			RxLock.Lock()
+			Rx += uint64(readCount)
+			RxLock.Unlock()
 		}
 	}
 }
@@ -180,8 +196,8 @@ func sendFD(via *net.UnixConn, fd int) error {
 	if err != nil {
 		return err
 	}
-	data:=make([]byte,1024)
-	_,_,_,_, err=syscall.Recvmsg(socket,nil,data,0)
+	data := make([]byte, 1024)
+	_, _, _, _, err = syscall.Recvmsg(socket, nil, data, 0)
 	log.Println("Recv response from VPN service")
 	if err != nil {
 		return err

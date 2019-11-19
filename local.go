@@ -1,8 +1,11 @@
 package lightsocks
 
 import (
+	"encoding/binary"
+	"fmt"
 	"log"
 	"net"
+	"time"
 )
 
 type LsLocal struct {
@@ -39,6 +42,7 @@ func NewLsLocal(password string, listenAddr, remoteAddr string) (*LsLocal, error
 
 // 本地端启动监听，接收来自本机浏览器的连接
 func (local *LsLocal) Listen(didListen func(listenAddr net.Addr)) error {
+	trafficStat()
 	return ListenSecureTCP(local.ListenAddr, local.Password, local.handleConn, didListen)
 }
 
@@ -68,4 +72,57 @@ func (local *LsLocal) handleConn(userConn *SecureTCPConn) {
 	}()
 	// 从 localUser 发送数据发送到 proxyServer，这里因为处在翻墙阶段出现网络错误的概率更大
 	userConn.EncodeCopy(proxyServer)
+}
+
+func trafficStat() {
+	printTicker := time.NewTicker(10 * time.Second)
+	statTicker := time.NewTicker(1 * time.Second)
+	go func() {
+		for {
+			select {
+			case _ = <-printTicker.C:
+				printTrafficStat()
+			case _ = <-statTicker.C:
+				sendTrafficStat()
+			}
+		}
+	}()
+}
+
+func printTrafficStat() {
+	RxLock.RLock()
+	TxLock.RLock()
+	fmt.Printf("Receive: %dM Send: %dM\n", Rx/1024/1024, Tx/1024/1024)
+	RxLock.RUnlock()
+	TxLock.RUnlock()
+}
+
+func sendTrafficStat() {
+	addr, err := net.ResolveUnixAddr("unix", "stat_main")
+	if err != nil {
+		log.Printf("Failed to resolve: %v\n", err)
+		return
+	}
+
+	conn, err := net.DialUnix("unix", nil, addr)
+	if err != nil {
+		log.Printf("Failed to dial: %v\n", err)
+		return
+	}
+	defer conn.Close()
+
+	bs := make([]byte, 8)
+	TxLock.RLock()
+	binary.LittleEndian.PutUint64(bs, Tx)
+	TxLock.RUnlock()
+	conn.Write(bs)
+	RxLock.RLock()
+	binary.LittleEndian.PutUint64(bs, Rx)
+	RxLock.RUnlock()
+	conn.Write(bs)
+
+	if err != nil {
+		log.Printf("Failed to report stat: %v\n", err)
+		return
+	}
 }
