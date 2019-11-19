@@ -1,3 +1,7 @@
+A ported and modified version of [Lightsocks](https://github.com/gwuhaolin/lightsocks), used as my own vpn solution to access oversea network. 
+
+Original docs of Lightsocks:
+
 [![GoDoc](http://img.shields.io/badge/godoc-reference-5272B4.svg?style=flat-square)](https://godoc.org/github.com/gwuhaolin/lightsocks)
 
 # [Lightsocks](https://github.com/gwuhaolin/lightsocks)
