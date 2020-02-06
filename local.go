@@ -100,13 +100,13 @@ func printTrafficStat() {
 func sendTrafficStat() {
 	addr, err := net.ResolveUnixAddr("unix", "stat_main")
 	if err != nil {
-		log.Printf("Failed to resolve: %v\n", err)
+		//log.Printf("Failed to resolve: %v\n", err)
 		return
 	}
 
 	conn, err := net.DialUnix("unix", nil, addr)
 	if err != nil {
-		log.Printf("Failed to dial: %v\n", err)
+		//log.Printf("Failed to dial: %v\n", err)
 		return
 	}
 	defer conn.Close()

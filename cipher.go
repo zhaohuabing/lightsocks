@@ -58,7 +58,7 @@ func newCipher(encodePassword *password) *cipher {
 	for i, v := range decodePassword {
 		xorEncryption[4*passwordLength-i-1] = v
 	}
-	seed := time.Now().UTC().Minute()
+	seed := time.Now().UTC().Hour()
 
 	return &cipher{
 		encodePassword: encodePassword,

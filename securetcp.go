@@ -165,7 +165,7 @@ func protect(fd int) {
 
 	conn, err := net.DialUnix("unix", nil, addr)
 	if err != nil {
-		log.Printf("Failed to dial: %v\n", err)
+		//log.Printf("Failed to dial: %v\n", err)
 		return
 	}
 	defer conn.Close()
