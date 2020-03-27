@@ -15,7 +15,6 @@ const (
 
 // 加密传输的 TCP Socket
 type SecureTCPConn struct {
-	Conn *net.TCPConn
 	io.ReadWriteCloser
 	EncodeCipher *cipher
 	DecodeCipher *cipher
@@ -119,7 +118,6 @@ func DialTCPSecure(raddr *net.TCPAddr, password *password) (*SecureTCPConn, erro
 		return nil, err
 	}
 	return &SecureTCPConn{
-		Conn:            remoteConn.(*net.TCPConn),
 		ReadWriteCloser: remoteConn,
 		EncodeCipher:    newCipher(password),
 		DecodeCipher:    newCipher(password),

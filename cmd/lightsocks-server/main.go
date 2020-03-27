@@ -7,9 +7,9 @@ import (
 	"os"
 	"strconv"
 
-	"lightsocks"
-	"lightsocks/cmd"
 	"github.com/phayes/freeport"
+	"github.com/zhaohuabing/lightsocks"
+	"github.com/zhaohuabing/lightsocks/cmd"
 )
 
 var version = "master"

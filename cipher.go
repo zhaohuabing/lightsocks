@@ -1,6 +1,6 @@
 package lightsocks
 
-import(
+import (
 	"time"
 )
 

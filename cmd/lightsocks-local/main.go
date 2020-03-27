@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"lightsocks"
-	"lightsocks/cmd"
+	"github.com/zhaohuabing/lightsocks"
+	"github.com/zhaohuabing/lightsocks/cmd"
 	"log"
 	"net"
 	"os"
@@ -18,7 +18,7 @@ func main() {
 
 	args := os.Args[1:]
 
-	if len(args) < 3{
+	if len(args) < 3 {
 		fmt.Println("usage: light-client listenAddr serverAddr Password, for example ./light-client :8080 10.75.8.83:12345 o475dVEctO+BuOXDRsQ...  ")
 		os.Exit(1)
 	}
@@ -27,10 +27,10 @@ func main() {
 	config := &cmd.Config{
 		ListenAddr: args[0],
 		RemoteAddr: args[1],
-		Password: args[2],
+		Password:   args[2],
 	}
 
-	if len(args) == 4{
+	if len(args) == 4 {
 
 	}
 
@@ -39,6 +39,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	log.Println()
 	log.Fatalln(lsLocal.Listen(func(listenAddr net.Addr) {
 		fmt.Println(fmt.Sprintf(`
 lightsocks-local 启动成功，配置如下：
